@@ -60,20 +60,20 @@ app.post("/upload", upload.single("file"), (req, res) => {
 app.get("/run-python", (req, res) => {
   const pythonScriptPath = path.join(__dirname, "algorithm.py");
   const pythonProcess = spawn("python3", [pythonScriptPath]);
+  let outputData = "";
 
-  // Output python tsb
   pythonProcess.stdout.on("data", (data) => {
-    console.log(`Output: ${data}`);
+    outputData += data.toString(); // Append data from py
   });
 
   pythonProcess.stderr.on("data", (data) => {
     console.error(`Error: ${data}`);
   });
 
-  // Kirim respons ke client saat script selesai
+  // On process close, send the response back to the frontend
   pythonProcess.on("close", (code) => {
     console.log(`Python script finished with exit code ${code}`);
-    res.send("Python script executed successfully!");
+    res.send({ message: outputData }); // Send the output back
   });
 });
 

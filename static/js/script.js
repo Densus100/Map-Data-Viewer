@@ -86,7 +86,6 @@ $(document).ready(function () {
   // });
 
   function loadExcelFromServer() {
-    console.log("Button clicked!");
     fetch("http://localhost:3000/uploads/excel-file/last-update")
       .then((response) => response.json())
       .then((data) => {
@@ -144,22 +143,28 @@ $(document).ready(function () {
     table.column(4).search(city).draw();
   });
 
-  $(".run-py-btn").click(function () {
-    runPythonScript();
-  });
+  // button click running py
+  document.querySelectorAll(".run-py-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const tabId = button.getAttribute("data-tab");
 
-  function runPythonScript() {
-    fetch("/run-python", {
-      method: "GET", // Call the endpoint
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        console.log(data); // Output response in console
-        alert("Python script executed successfully!");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Failed to execute Python script.");
-      });
-  }
+      // loading while running py
+      document.getElementById(`output-${tabId}`).innerText =
+        "Running Python script...";
+
+      fetch("http://localhost:3000/run-python")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data.message);
+
+          // Update output from py
+          document.getElementById(`output-${tabId}`).innerText = data.message;
+        })
+        .catch((error) => {
+          console.error("Error running Python script:", error);
+          document.getElementById(`output-${tabId}`).innerText =
+            "Error running Python script.";
+        });
+    });
+  });
 });
