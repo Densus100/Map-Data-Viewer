@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <header class="bg-success text-white text-center py-3">
+        <h1>Data and Map Viewer</h1>
+    </header>
+
+    <div class="container my-5 text-center">
+
+        <!-- <button id="load-data-btn" class="btn btn-success btn-lg w-100 mb-4">Load Excel Data</button> -->
+        <p>Last Update: <span id="last-update">Loading...</span></p>
+        <button id="file-upload-btn" class="mb-4">Upload Data</button>
+
+        <input type="file" id="file-upload" accept=".xlsx,.xls,.csv" class="form-control mb-4" style="display: none;"/>
+       
+
+        
+        <img id="map" src="/static/img/map.png" alt="Map Image" class="rounded mb-4 shadow mx-auto " usemap="#city-map">
+
+        <map name="city-map">
+            <area target="" alt="Kab. Tuban" title="Kab. Tuban" href="" coords="318,51,388,108" shape="rect" data-city="Tuban">
+            <area target="" alt="Kab. Bojonegoro" title="Kab. Bojonegoro" href="" coords="276,149,360,198" shape="rect" data-city="Bojonegoro">
+            <area target="" alt="Kab. Ngawi" title="Kab. Ngawi" href="" coords="124,218,191,265" shape="rect" data-city="Ngawi">
+            <area target="" alt="Kab. Magetan" title="Kab. Magetan" href="" coords="132,300,194,335" shape="rect" data-city="Magetan">
+            <area target="" alt="Kab. Ponorogo" title="Kab. Ponorogo" href="" coords="176,380,248,423" shape="rect" data-city="Ponorogo">
+            <area target="" alt="Kab. Pacitan" title="Kab. Pacitan" href="" coords="80,459,155,494" shape="rect" data-city="Pacitan">
+            <area target="" alt="Kab,. Trenggalek" title="Kab,. Trenggalek" href="" coords="205,468,287,511" shape="rect" data-city="Kab,. Trenggalek">
+            <area target="" alt="Kab. Tulungagung" title="Kab. Tulungagung" href="" coords="332,451,398,484" shape="rect" data-city="Tulungagung">
+            <area target="" alt="Kota Madiun" title="Kota Madiun" href="" coords="211,281,243,311" shape="rect" data-city="Madiun">
+            <area target="" alt="Kab. Madiun" title="Kab. Madiun" href="" coords="248,304,285,338" shape="rect" data-city="Madiun">
+            <area target="" alt="Kab. Nganjuk" title="Kab. Nganjuk" href="" coords="346,255,398,287" shape="rect" data-city="Nganjuk">
+            <area target="" alt="Kota Kediri" title="Kota Kediri" href="" coords="367,359,414,389" shape="rect" data-city="Kediri">
+            <area target="" alt="Kab. Kediri" title="Kab. Kediri" href="" coords="420,328,468,363" shape="rect" data-city="Kediri">
+            <area target="" alt="Kab. Lamongan" title="Kab. Lamongan" href="" coords="462,117,513,156" shape="rect" data-city="Lamongan">
+            <area target="" alt="Kab. Gresik" title="Kab. Gresik" href="" coords="543,148,579,179" shape="rect" data-city="Gresik">
+            <area target="" alt="Kab. Jombang" title="Kab. Jombang" href="" coords="444,247,488,284" shape="rect" data-city="Jombang">
+            <area target="" alt="Kota Blitar" title="Kota Blitar" href="" coords="416,437,465,465" shape="rect" data-city="Blitar">
+            <area target="" alt="Kab. Blitar" title="Kab. Blitar" href="" coords="431,482,484,526" shape="rect" data-city="Blitar">
+            <area target="" alt="Kota Surabaya" title="Kota Surabaya" href="" coords="605,163,654,200" shape="rect" data-city="Surabaya">
+            <area target="" alt="Kota Mojokerto" title="Kota Mojokerto" href="" coords="512,240,544,273" shape="rect" data-city="Mojokerto">
+            <area target="" alt="Kab. Mojokerto" title="Kab. Mojokerto" href="" coords="531,283,574,328" shape="rect" data-city="Mojokerto">
+            <area target="" alt="Kab. Batu" title="Kab. Batu" href="" coords="510,363,547,398" shape="rect" data-city="Batu">
+            <area target="" alt="Kota Malang" title="Kota Malang" href="" coords="567,400,628,442" shape="rect" data-city="Malang">
+            <area target="" alt="Kab. Malang" title="Kab. Malang" href="" coords="573,489,626,522" shape="rect" data-city="Malang">
+            <area target="" alt="Kota Pasuruan" title="Kota Pasuruan" href="" coords="659,296,711,337" shape="rect" data-city="Pasuruan">
+            <area target="" alt="Kab. Pasuruan" title="Kab. Pasuruan" href="" coords="649,351,703,388" shape="rect" data-city="Pasuruan">
+            <area target="" alt="Kab. Sidoarjo" title="Kab. Sidoarjo" href="" coords="602,214,648,251" shape="rect" data-city="Sidoarjo">
+            <area target="" alt="Kota Probolinggo" title="Kota Probolinggo" href="" coords="755,333,813,377" shape="rect" data-city="Probolinggo">
+            <area target="" alt="Kab. Probolinggo" title="Kab. Probolinggo" href="" coords="853,376,903,409" shape="rect" data-city="Probolinggo">
+            <area target="" alt="Kab. Lumajang" title="Kab. Lumajang" href="" coords="737,443,794,480" shape="rect" data-city="Lumajang">
+            <area target="" alt="Kab. Jember" title="Kab. Jember" href="" coords="967,521,911,486" shape="rect" data-city="Jember">
+            <area target="" alt="Kab. Bondowoso" title="Kab. Bondowoso" href="" coords="1009,364,1063,412" shape="rect" data-city="Bondowoso">
+            <area target="" alt="Kab. Situbondo" title="Kab. Situbondo" href="" coords="1104,326,1166,372" shape="rect" data-city="Situbondo">
+            <area target="" alt="Kab. Banyuwangi" title="Kab. Banyuwangi" href="" coords="1082,519,1151,571" shape="rect" data-city="Banyuwangi">
+            <area target="" alt="Kab. Bangkalan" title="Kab. Bangkalan" href="" coords="648,86,701,131" shape="rect" data-city="Bangkalan">
+            <area target="" alt="Kab. Sampang" title="Kab. Sampang" href="" coords="780,99,825,137" shape="rect" data-city="Sampang">
+            <area target="" alt="Kab. Pamekasan" title="Kab. Pamekasan" href="" coords="864,85,906,126" shape="rect" data-city="Pamekasan">
+            <area target="" alt="Kab. Sumenep" title="Kab. Sumenep" href="" coords="970,59,1030,101" shape="rect" data-city="Sumenep">
+        </map>
+
+        <table id="data-table" class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Column 1</th>
+                    <th class="text-center">Column 2</th>
+                    <th class="text-center">Column 3</th>
+                    <th class="text-center">Column 4</th>
+                    <th class="text-center">Column 5</th>
+                    <th class="text-center">Column 6</th>
+                    <th class="text-center">Column 7</th>
+                    <th class="text-center">Column 8</th>
+                    <th class="text-center">Column 9</th>
+                    <th class="text-center">Column 10</th>
+                    <th class="text-center">Column 11</th>
+                    <th class="text-center">Column 12</th>
+                    <th class="text-center">Column 13</th>
+                    <th class="text-center">Column 14</th>
+                    <th class="text-center">Column 15</th>
+                    <th class="text-center">Column 16</th>
+                    <th class="text-center">Column 17</th>
+                    <th class="text-center">Column 18</th>
+                    <th class="text-center">Column 19</th>
+                    <th class="text-center">Column 20</th>
+                    <th class="text-center">Column 21</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- dynamic table -->
+            </tbody>
+        </table>
+
+        <div class="container my-5">
+            <!-- Tab Interface -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Tab 1</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Tab 2</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Tab 3</button>
+                </li>
+            </ul>
+        
+            
+            <div class="tab-content mt-4" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                    <h3>Welcome to Tab 1</h3>
+                    <button class="btn btn-primary run-py-btn">Button in Tab 1</button>
+                </div>
+
+                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <h3>Welcome to Tab 2</h3>
+                    <button class="btn btn-primary run-py-btn">Button in Tab 2</button>
+                </div>
+
+                <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                    <h3>Welcome to Tab 3</h3>
+                    <button class="btn btn-primary run-py-btn">Button in Tab 3</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script src="js/script.js"> </script>
+
+    
+</body>
+</html>
