@@ -64,8 +64,11 @@ $(document).ready(function () {
     var formData = new FormData();
     formData.append("file", file);
 
+    // Use browser's IP for the request (this assumes you are using the correct network)
+    var serverIP = window.location.hostname;  // This will dynamically fetch the IP of the server
+
     $.ajax({
-      url: "http://localhost:3000/upload",
+      url: `http://${serverIP}:3000/upload`,  // Use dynamic IP
       method: "POST",
       data: formData,
       contentType: false,
@@ -86,7 +89,11 @@ $(document).ready(function () {
   // });
 
   function loadExcelFromServer() {
-    fetch("http://localhost:3000/uploads/excel-file/last-update")
+
+    // Use browser's IP for the request (this assumes you are using the correct network)
+    var serverIP = window.location.hostname;  // This will dynamically fetch the IP of the server
+
+    fetch(`http://${serverIP}:3000/uploads/excel-file/last-update`)
       .then((response) => response.json())
       .then((data) => {
         const lastUpdateDate = data.lastModified; // lastupdate
@@ -97,7 +104,7 @@ $(document).ready(function () {
         ).toLocaleString();
 
         // get file excel
-        return fetch("http://localhost:3000/uploads/excel-file").then(
+        return fetch(`http://${serverIP}:3000/uploads/excel-file`).then(
           (response) => response.arrayBuffer()
         );
       })
@@ -152,7 +159,10 @@ $(document).ready(function () {
       document.getElementById(`output-${tabId}`).innerText =
         "Running Python script...";
 
-      fetch("http://localhost:3000/run-python")
+      // Use browser's IP for the request (this assumes you are using the correct network)
+      var serverIP = window.location.hostname;  // This will dynamically fetch the IP of the server
+
+      fetch(`http://${serverIP}:3000/run-python`)
         .then((response) => response.json())
         .then((data) => {
           console.log(data.message);
