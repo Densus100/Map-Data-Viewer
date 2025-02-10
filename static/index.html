@@ -22,7 +22,7 @@
        
 
         
-        <img id="map" src="img/map.png" alt="Map Image" class="rounded mb-4 shadow mx-auto " usemap="#city-map">
+        <img id="map" src="img/map.png" alt="Map Image" class="img-fluid rounded mb-4 shadow mx-auto " usemap="#city-map">
 
         <map name="city-map">
             <area target="" alt="Kab. Tuban" title="Kab. Tuban" href="" coords="318,51,388,108" shape="rect" data-city="Tuban">
@@ -64,8 +64,8 @@
             <area target="" alt="Kab. Pamekasan" title="Kab. Pamekasan" href="" coords="864,85,906,126" shape="rect" data-city="Pamekasan">
             <area target="" alt="Kab. Sumenep" title="Kab. Sumenep" href="" coords="970,59,1030,101" shape="rect" data-city="Sumenep">
         </map>
-
-        <table id="data-table" class="table table-striped">
+        
+        <table class="dynamic-table table table-bordered">
             <thead class="table-dark">
                 <tr>
                     <th class="text-center">Column 1</th>
@@ -100,34 +100,31 @@
             <!-- Tab Interface -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Tab 1</button>
+                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">K-Means</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Tab 2</button>
+                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Gaussian Mixture</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Tab 3</button>
+                    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Hierarchical Clustering</button>
                 </li>
             </ul>
         
             
             <div class="tab-content mt-4" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-                    <h3>Welcome to Tab 1</h3>
                     <div id="output-tab1"></div>
-                    <button class="btn btn-primary run-py-btn" data-tab="tab1">Button in Tab 1</button>
+                    <button class="btn btn-primary load-result-btn" data-tab="tab1">Generate Data</button>
                 </div>
 
                 <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-                    <h3>Welcome to Tab 2</h3>
                     <div id="output-tab2"></div>
-                    <button class="btn btn-primary run-py-btn" data-tab="tab2">Button in Tab 2</button>
+                    <button class="btn btn-primary load-result-btn" data-tab="tab2">Generate Data</button>
                 </div>
 
                 <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-                    <h3>Welcome to Tab 3</h3>
                     <div id="output-tab3"></div>
-                    <button class="btn btn-primary run-py-btn" data-tab="tab3"> Button in Tab 3</button>
+                    <button class="btn btn-primary load-result-btn" data-tab="tab3">Generate Data</button>
                 </div>
             </div>
         </div>
