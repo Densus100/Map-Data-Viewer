@@ -109,28 +109,71 @@ app.get("/run-python", (req, res) => {
 
 app.get("/load-content/:tab", (req, res) => {
   const tab = req.params.tab;
-  const fileMap = {
-    tab1: "kmeans_model/kmeans_html_results.txt",
-    tab2: "gmm_model/gmm_html_results.txt",
-    tab3: "hierarchical/hierarchical_html_results.txt",
+  const modelMap = {
+    tab1: {
+      script: "kmeans_model/kmeans_train_model.py",
+      txt: "kmeans_model/kmeans_html_results.txt",
+      images: [
+        "kmeans_model/kmeans_clusters.png",
+        "kmeans_model/kmeans_pca.png",
+        "kmeans_model/kmeans_confusion_matrix.png",
+      ],
+    },
+    tab2: {
+      script: "gmm_model/gmm_train_model.py",
+      txt: "gmm_model/gmm_html_results.txt",
+      images: [
+        "gmm_model/gmm_clusters.png",
+        "gmm_pca.png",
+        "gmm_confusion_matrix.png",
+      ],
+    },
+    tab3: {
+      script: "hierarchical_model/hierarchical_train_model.py",
+      txt: "hierarchical_model/hierarchical_html_results.txt",
+      images: [
+        "hierarchical_model/hierarchical_clusters.png",
+        "hierarchical_model/hierarchical_pca.png",
+        "hierarchical_model/hierarchical_confusion_matrix.png",
+      ],
+    },
   };
 
-  const fileName = fileMap[tab];
-  if (!fileName) {
+  const model = modelMap[tab];
+  if (!model) {
     return res.status(400).send("Invalid tab name.");
   }
 
-  const filePath = path.join(__dirname, "uploads", fileName);
+  const scriptPath = path.join(__dirname, "uploads", model.script);
+  const filePath = path.join(__dirname, "uploads", model.txt);
 
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send("File not found.");
-  }
+  // Run Python script
+  const pythonProcess = spawn("python3", [scriptPath]);
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file.");
+  pythonProcess.stdout.on("data", (data) => {
+    console.log(`Python Output: ${data}`);
+  });
+
+  pythonProcess.stderr.on("data", (data) => {
+    console.error(`Error: ${data}`);
+  });
+
+  pythonProcess.on("close", (code) => {
+    console.log(`Python script finished with code ${code}`);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send("File not found.");
     }
-    res.send(data); // Kirim isi file ke frontend
+
+    fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+        return res.status(500).send("Error reading file.");
+      }
+      res.json({
+        images: model.images,
+        content: data,
+      });
+    });
   });
 });
 

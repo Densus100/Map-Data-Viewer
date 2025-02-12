@@ -1,5 +1,9 @@
 $(document).ready(function () {
-  var table = $(".dynamic-table").DataTable();
+  var table = $(".dynamic-table").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
+
   $("table").DataTable();
 
   // Use browser's IP for the request (this assumes you are using the correct network)
@@ -17,7 +21,7 @@ $(document).ready(function () {
     formData.append("file", file);
 
     $.ajax({
-      url: `http://${serverIP}:3000/upload`,  // Use dynamic IP
+      url: `http://${serverIP}:3000/upload`, // Use dynamic IP
       method: "POST",
       data: formData,
       contentType: false,
@@ -43,10 +47,14 @@ $(document).ready(function () {
     fetch(`http://${serverIP}:3000/uploads/excel-file/last-update`)
       .then((response) => response.json())
       .then((data) => {
+        const lastUpdateDate = data.lastModified; // lastupdate
+
+        // Display the last update date in the HTML
         document.getElementById("last-update").innerText = new Date(
-          data.lastModified
+          lastUpdateDate
         ).toLocaleString();
 
+        // get file excel
         return fetch(`http://${serverIP}:3000/uploads/excel-file`).then(
           (response) => response.arrayBuffer()
         );
@@ -58,40 +66,30 @@ $(document).ready(function () {
         var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         var headerRow = jsonData[0];
-
-        // Hancurkan DataTable jika sudah ada
-        if ($.fn.DataTable.isDataTable(".dynamic-table")) {
-          $(".dynamic-table").DataTable().destroy();
-        }
-
-        // Bersihkan tabel sebelum mengisi ulang
-        $(".dynamic-table thead").empty();
-        $(".dynamic-table tbody").empty();
-
-        // Tambahkan header
         var tableHeadHtml = "<tr>";
         headerRow.forEach(function (col) {
           tableHeadHtml += '<th class="text-center">' + col + "</th>";
         });
         tableHeadHtml += "</tr>";
+
         $(".dynamic-table thead").html(tableHeadHtml);
 
-        var tableBodyHtml = "";
+        table.clear();
+
+        // Add data rows
         jsonData.slice(1).forEach(function (row) {
-          tableBodyHtml += "<tr>";
+          var rowData = [];
           headerRow.forEach(function (_, i) {
-            tableBodyHtml += `<td>${row[i] !== undefined ? row[i] : ""}</td>`;
+            rowData.push(row[i] !== undefined ? row[i] : "");
           });
-          tableBodyHtml += "</tr>";
+
+          if (rowData.length === headerRow.length) {
+            table.row.add(rowData);
+          }
         });
 
-        $(".dynamic-table tbody").html(tableBodyHtml);
-
-        // Inisialisasi ulang DataTable dengan scroll horizontal
-        $(".dynamic-table").DataTable({
-          scrollX: true,
-          autoWidth: false,
-        });
+        // Redraw the table
+        table.draw();
       })
       .catch((error) => console.error("Error reading file: ", error));
   }
@@ -99,6 +97,7 @@ $(document).ready(function () {
   $("area").on("click", function (event) {
     event.preventDefault();
     const city = $(this).data("city");
+    $("#selected-city").text("Filter Kota: " + city);
 
     table.column(4).search(city).draw();
   });
@@ -106,11 +105,39 @@ $(document).ready(function () {
   $(".load-result-btn").click(function () {
     var tab = $(this).data("tab"); // Ambil tab yang diklik
     var outputDiv = $("#output-" + tab); // Target output berdasarkan tab
+    var imagesDiv = $("#images-" + tab); // Div untuk menampilkan gambar
+
+    // Tampilkan loading animation
+    outputDiv.html(`<p class="text-center">Generating data...<br>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </p>`);
 
     fetch(`http://${serverIP}:3000/load-content/${tab}`)
-      .then((response) => response.text())
+      .then((response) => response.json()) // Ubah response menjadi JSON
       .then((data) => {
-        outputDiv.html(`<pre>${data}</pre>`); // Menampilkan isi file dalam elemen pre agar rapi
+        outputDiv.empty(); // Bersihkan loading
+        imagesDiv.empty(); // Bersihkan gambar sebelumnya
+
+        // Tampilkan gambar hasil model
+        data.images.forEach((img) => {
+          imagesDiv.append(
+            `<img src="../uploads/${img}" class="img-fluid mb-3">`
+          );
+        });
+
+        // Tampilkan tabel hasil
+        outputDiv.html(`<pre>${data.content}</pre>`); // Menampilkan isi file dalam elemen <pre>
+
+        // Pastikan DataTable diinisialisasi ulang dengan benar
+        if ($.fn.DataTable.isDataTable("table")) {
+          $("table").DataTable().destroy();
+        }
+        $("table").DataTable({
+          scrollX: true,
+          autoWidth: false,
+        });
       })
       .catch((error) => {
         console.error("Error:", error);
