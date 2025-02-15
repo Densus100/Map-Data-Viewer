@@ -21,14 +21,14 @@ $(document).ready(function () {
     formData.append("file", file);
 
     $.ajax({
-      url: `http://${serverIP}:3000/upload`, // Use dynamic IP
+      url: `http://${serverIP}:3000/upload`, // ✅ Gunakan template literal
       method: "POST",
       data: formData,
       contentType: false,
       processData: false,
       success: function (response) {
         console.log(response);
-        alert("File berhasil di-upload dan di-replace!");
+        alert("File berhasil di-upload dan diproses!");
       },
       error: function (error) {
         console.error("Terjadi error saat upload:", error);
@@ -37,28 +37,21 @@ $(document).ready(function () {
     });
   });
 
-  // $("#load-data-btn").click(function () {
-  loadExcelFromServer();
-  // });
-
   function loadExcelFromServer() {
-    var serverIP = window.location.hostname;
-
     fetch(`http://${serverIP}:3000/uploads/excel-file/last-update`)
       .then((response) => response.json())
       .then((data) => {
-        const lastUpdateDate = data.lastModified; // lastupdate
-
-        // Display the last update date in the HTML
-        document.getElementById("last-update").innerText = new Date(
-          lastUpdateDate
-        ).toLocaleString();
-
-        // get file excel
-        return fetch(`http://${serverIP}:3000/uploads/excel-file`).then(
-          (response) => response.arrayBuffer()
-        );
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(data);
+          }, 500); // Tambahkan delay agar loading terlihat
+        });
       })
+      .then((data) => {
+        $("#last-update").text(new Date(data.lastModified).toLocaleString());
+        return fetch(`http://${serverIP}:3000/uploads/excel-file`);
+      })
+      .then((response) => response.arrayBuffer())
       .then((buffer) => {
         var data = new Uint8Array(buffer);
         var workbook = XLSX.read(data, { type: "array" });
@@ -66,23 +59,21 @@ $(document).ready(function () {
         var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         var headerRow = jsonData[0];
-        var tableHeadHtml = "<tr>";
-        headerRow.forEach(function (col) {
-          tableHeadHtml += '<th class="text-center">' + col + "</th>";
-        });
-        tableHeadHtml += "</tr>";
+        var table = $(".dynamic-table").DataTable();
 
-        $(".dynamic-table thead").html(tableHeadHtml);
+        // ✅ Perbaikan dalam menambahkan header
+        $(".dynamic-table thead").empty().append(`
+          <tr>${headerRow
+            .map((col) => `<th class="text-center">${col}</th>`)
+            .join("")}</tr>
+        `);
 
+        // ✅ Update isi tabel tanpa destroy
         table.clear();
-
-        // Add data rows
-        jsonData.slice(1).forEach(function (row) {
-          var rowData = [];
-          headerRow.forEach(function (_, i) {
-            rowData.push(row[i] !== undefined ? row[i] : "");
-          });
-
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) =>
+            row[i] !== undefined ? row[i] : ""
+          );
           if (rowData.length === headerRow.length) {
             table.row.add(rowData);
           }
@@ -93,19 +84,92 @@ $(document).ready(function () {
       })
       .catch((error) => console.error("Error reading file: ", error));
   }
+  loadExcelFromServer();
+
+  // Sembunyikan tombol reset saat halaman pertama dimuat
+  $("#reset-filter").hide();
 
   $("area").on("click", function (event) {
     event.preventDefault();
     const city = $(this).data("city");
     $("#selected-city").text("Filter Kota: " + city);
 
-    table.column(4).search(city).draw();
+    table.column(3).search(city).draw();
+    if (city) {
+      $("#reset-filter").show();
+    }
   });
 
-  $(".load-result-btn").click(function () {
-    var tab = $(this).data("tab"); // Ambil tab yang diklik
-    var outputDiv = $("#output-" + tab); // Target output berdasarkan tab
-    var imagesDiv = $("#images-" + tab); // Div untuk menampilkan gambar
+  $("#reset-filter").on("click", function () {
+    $("#selected-city").text("Menampilkan Semua Kota");
+    table.column(3).search("").draw(); // Menghapus filter
+
+    // ✅ Perbaikan: gunakan `$(this)`, bukan `$$(this)`
+    $(this).hide();
+  });
+
+  table.on("draw", function () {
+    let filterApplied = table.column(3).search() !== "";
+    $("#reset-filter").toggle(filterApplied);
+  });
+
+  function checkExistingImages(tab) {
+    let imagesDiv = $(`#images-${tab}`); // Pilih container gambar sesuai tab
+    let outputDiv = $(`#output-${tab}`); // Pilih container teks sesuai tab
+
+    fetch(`http://${serverIP}:3000/check-existing-images/${tab}`)
+      .then((response) => response.json())
+      .then((data) => {
+        imagesDiv.empty(); // Bersihkan gambar sebelumnya
+        outputDiv.empty(); // Bersihkan teks sebelumnya
+
+        // Handle gambar
+        if (data.images.length > 0) {
+          imagesDiv.show(); // Tampilkan container gambar
+          data.images.forEach((img) => {
+            imagesDiv.append(
+              `<img src="../uploads/${img}" class="img-fluid mb-3">`
+            );
+          });
+        } else {
+          imagesDiv.hide(); // Sembunyikan jika tidak ada gambar
+        }
+
+        // Handle teks
+        if (data.text) {
+          // Tampilkan tabel hasil
+          outputDiv.html(`<pre>${data.text}</pre>`); // Menampilkan isi file dalam elemen <pre>
+
+          // Pastikan DataTable diinisialisasi ulang dengan benar
+          if ($.fn.DataTable.isDataTable(".output_result")) {
+            $(".output_result").DataTable().destroy();
+          }
+          $(".output_result").DataTable({
+            scrollX: true,
+            autoWidth: false,
+          });
+          outputDiv.show(); // Tampilkan teks jika ada
+        } else {
+          outputDiv.hide(); // Sembunyikan jika tidak ada teks
+        }
+      })
+      .catch((error) => console.error("Error checking images:", error));
+  }
+
+  // Cek gambar saat halaman pertama dimuat (default tab1)
+  checkExistingImages("tab1");
+
+  // Event listener ketika tab diklik
+  $(".nav-link").on("click", function () {
+    let selectedTab = $(this).attr("id").replace("-tab", ""); // Ambil tab yang diklik
+    checkExistingImages(selectedTab); // Panggil fungsi sesuai tab
+  });
+
+  $(".load-result-btn").click(function (event) {
+    event.preventDefault();
+    var tab = $(this).data("tab");
+    // $(`#images-${tab}`).hide(); // Sembunyikan container gambar
+    var outputDiv = $("#output-" + tab);
 
     // Tampilkan loading animation
     outputDiv.html(`<p class="text-center">Generating data...<br>
@@ -118,23 +182,32 @@ $(document).ready(function () {
       .then((response) => response.json()) // Ubah response menjadi JSON
       .then((data) => {
         outputDiv.empty(); // Bersihkan loading
-        imagesDiv.empty(); // Bersihkan gambar sebelumnya
 
         // Tampilkan gambar hasil model
+        let existingImages = imagesDiv
+          .find("img")
+          .map(function () {
+            return $(this).attr("src");
+          })
+          .get();
+
         data.images.forEach((img) => {
-          imagesDiv.append(
-            `<img src="../uploads/${img}" class="img-fluid mb-3">`
-          );
+          let imgSrc = `../uploads/${img}`;
+          if (!existingImages.includes(imgSrc)) {
+            imagesDiv.append(`<img src="${imgSrc}" class="img-fluid mb-3">`);
+          }
         });
+
+        imagesDiv.show(); // Pastikan container gambar tampil
 
         // Tampilkan tabel hasil
         outputDiv.html(`<pre>${data.content}</pre>`); // Menampilkan isi file dalam elemen <pre>
 
         // Pastikan DataTable diinisialisasi ulang dengan benar
-        if ($.fn.DataTable.isDataTable("table")) {
-          $("table").DataTable().destroy();
+        if ($.fn.DataTable.isDataTable(".output_result")) {
+          $(".output_result").DataTable().destroy();
         }
-        $("table").DataTable({
+        $(".output_result").DataTable({
           scrollX: true,
           autoWidth: false,
         });

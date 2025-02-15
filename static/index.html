@@ -69,6 +69,7 @@
         </map>
 
         <p id="selected-city" style="font-weight: bold; font-size: 18px;">Menampilkan Semua Kota</p>
+        <button id="reset-filter" style="display: none;">Tampilkan Semua Kota</button>
         
         <table class="dynamic-table table table-bordered">
             <thead class="table-dark">
@@ -93,7 +94,7 @@
                     <th class="text-center">Column 18</th>
                     <th class="text-center">Column 19</th>
                     <th class="text-center">Column 20</th>
-                    <th class="text-center">Column 21</th>
+                    <!-- <th class="text-center">Column 21</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -118,21 +119,24 @@
             
             <div class="tab-content mt-4" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                    <button class="btn btn-primary load-result-btn" data-tab="tab1">Generate Data</button>
                     <div id="images-tab1" class="text-center"></div> <!-- Tempat gambar -->
                     <div id="output-tab1"></div> <!-- Tempat tabel -->
-                    <button class="btn btn-primary load-result-btn" data-tab="tab1">Generate Data</button>
+                    <div class="row images-container1 justify-content-center" style="display: none;"></div>
                 </div>
             
                 <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <button class="btn btn-primary load-result-btn" data-tab="tab2">Generate Data</button>
                     <div id="images-tab2" class="text-center"></div>
                     <div id="output-tab2"></div>
-                    <button class="btn btn-primary load-result-btn" data-tab="tab2">Generate Data</button>
+                    <div class="row images-container2 justify-content-center" style="display: none;"></div>
                 </div>
             
                 <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                    <button class="btn btn-primary load-result-btn" data-tab="tab3">Generate Data</button>
                     <div id="images-tab3" class="text-center"></div>
                     <div id="output-tab3"></div>
-                    <button class="btn btn-primary load-result-btn" data-tab="tab3">Generate Data</button>
+                    <div class="row images-container3 justify-content-center" style="display: none;"></div>
                 </div>
             </div>
             

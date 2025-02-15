@@ -15,13 +15,13 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "uploads"));
   },
   filename: function (req, file, cb) {
-    cb(null, "data_ready.xlsx");
+    cb(null, "uploaded_file.xlsx");
   },
 });
 
 const upload = multer({ storage: storage });
 
-// check file exists
+// Endpoint untuk mendapatkan file hasil pemrosesan (data_ready.xlsx)
 app.get("/uploads/excel-file", (req, res) => {
   const filePath = path.join(__dirname, "uploads", "data_ready.xlsx");
 
@@ -32,7 +32,7 @@ app.get("/uploads/excel-file", (req, res) => {
   res.sendFile(filePath);
 });
 
-// lastupdate
+// Last update harus mengambil dari data_ready.xlsx
 app.get("/uploads/excel-file/last-update", (req, res) => {
   const filePath = path.join(__dirname, "uploads", "data_ready.xlsx");
 
@@ -41,21 +41,22 @@ app.get("/uploads/excel-file/last-update", (req, res) => {
   }
 
   const stats = fs.statSync(filePath);
-  const lastModified = stats.mtime; // Get last modification time
+  const lastModified = stats.mtime;
 
-  // Send last update
   res.json({ lastModified: lastModified.toISOString() });
 });
 
-// Endpoint untuk upload dan mengganti file Excel yang lama
+// Upload file, jalankan prepare_data.py, dan pastikan data_ready.xlsx tersedia
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "Tidak ada file yang di-upload" });
   }
 
-  console.log("File uploaded and replaced:", req.file);
+  console.log("File uploaded:", req.file);
 
-  // Jalankan prepare_data.py
+  const dataReadyPath = path.join(__dirname, "uploads", "data_ready.xlsx");
+
+  console.log("Menjalankan prepare_data.py...");
   const pythonScriptPath = path.join(__dirname, "uploads", "prepare_data.py");
   const pythonProcess = spawn("python3", [pythonScriptPath]);
 
@@ -64,46 +65,38 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
   pythonProcess.stdout.on("data", (data) => {
     outputData += data.toString();
+    console.log("Python Output:", data.toString()); // Logging untuk debug
   });
 
   pythonProcess.stderr.on("data", (data) => {
     errorData += data.toString();
+    console.error("Python Error:", data.toString()); // Logging untuk debug
   });
 
   pythonProcess.on("close", (code) => {
     console.log(`prepare_data.py selesai dengan kode ${code}`);
 
     if (code === 0) {
-      res.json({
-        message: "File berhasil di-upload dan diproses!",
-        output: outputData,
-      });
+      // Cek apakah data_ready.xlsx ada setelah proses selesai
+      if (fs.existsSync(dataReadyPath)) {
+        res.json({
+          message: "File berhasil di-upload dan diproses!",
+          output: outputData,
+        });
+      } else {
+        res.status(500).json({
+          message:
+            "File berhasil di-upload tetapi hasil proses tidak ditemukan.",
+          output: outputData,
+          error: errorData,
+        });
+      }
     } else {
       res.status(500).json({
         message: "Gagal memproses file.",
         error: errorData || "Terjadi kesalahan saat menjalankan script Python.",
       });
     }
-  });
-});
-
-app.get("/run-python", (req, res) => {
-  const pythonScriptPath = path.join(__dirname, "algorithm.py");
-  const pythonProcess = spawn("python3", [pythonScriptPath]);
-  let outputData = "";
-
-  pythonProcess.stdout.on("data", (data) => {
-    outputData += data.toString(); // Append data from py
-  });
-
-  pythonProcess.stderr.on("data", (data) => {
-    console.error(`Error: ${data}`);
-  });
-
-  // On process close, send the response back to the frontend
-  pythonProcess.on("close", (code) => {
-    console.log(`Python script finished with exit code ${code}`);
-    res.send({ message: outputData }); // Send the output back
   });
 });
 
@@ -124,14 +117,15 @@ app.get("/load-content/:tab", (req, res) => {
       txt: "gmm_model/gmm_html_results.txt",
       images: [
         "gmm_model/gmm_clusters.png",
-        "gmm_pca.png",
-        "gmm_confusion_matrix.png",
+        "gmm_model/gmm_pca.png",
+        "gmm_model/gmm_confusion_matrix.png",
       ],
     },
     tab3: {
       script: "hierarchical_model/hierarchical_train_model.py",
       txt: "hierarchical_model/hierarchical_html_results.txt",
       images: [
+        "hierarchical_model/hierarchical_dendrogram.png",
         "hierarchical_model/hierarchical_clusters.png",
         "hierarchical_model/hierarchical_pca.png",
         "hierarchical_model/hierarchical_confusion_matrix.png",
@@ -145,7 +139,6 @@ app.get("/load-content/:tab", (req, res) => {
   }
 
   const scriptPath = path.join(__dirname, "uploads", model.script);
-  const filePath = path.join(__dirname, "uploads", model.txt);
 
   // Run Python script
   const pythonProcess = spawn("python3", [scriptPath]);
@@ -157,6 +150,8 @@ app.get("/load-content/:tab", (req, res) => {
   pythonProcess.stderr.on("data", (data) => {
     console.error(`Error: ${data}`);
   });
+
+  const filePath = path.join(__dirname, "uploads", model.txt);
 
   pythonProcess.on("close", (code) => {
     console.log(`Python script finished with code ${code}`);
@@ -174,6 +169,59 @@ app.get("/load-content/:tab", (req, res) => {
         content: data,
       });
     });
+  });
+});
+
+app.get("/check-existing-images/:tab", (req, res) => {
+  const tab = req.params.tab;
+  const modelMap = {
+    tab1: {
+      txt: "kmeans_model/kmeans_html_results.txt",
+      images: [
+        "kmeans_model/kmeans_clusters.png",
+        "kmeans_model/kmeans_pca.png",
+        "kmeans_model/kmeans_confusion_matrix.png",
+      ],
+    },
+    tab2: {
+      txt: "gmm_model/gmm_html_results.txt",
+      images: [
+        "gmm_model/gmm_clusters.png",
+        "gmm_model/gmm_pca.png",
+        "gmm_model/gmm_confusion_matrix.png",
+      ],
+    },
+    tab3: {
+      txt: "hierarchical_model/hierarchical_html_results.txt",
+      images: [
+        "hierarchical_model/hierarchical_dendrogram.png",
+        "hierarchical_model/hierarchical_clusters.png",
+        "hierarchical_model/hierarchical_pca.png",
+        "hierarchical_model/hierarchical_confusion_matrix.png",
+      ],
+    },
+  };
+
+  const model = modelMap[tab];
+  if (!model) {
+    return res.status(400).send("Invalid tab name.");
+  }
+
+  const txtPath = path.join(__dirname, "uploads", model.txt);
+  const txtExists = fs.existsSync(txtPath);
+
+  let txtContent = "";
+  if (txtExists) {
+    txtContent = fs.readFileSync(txtPath, "utf8"); // Baca isi file txt jika ada
+  }
+
+  const existingImages = model.images.filter((img) =>
+    fs.existsSync(path.join(__dirname, "uploads", img))
+  );
+
+  res.json({
+    images: existingImages,
+    text: txtExists ? txtContent : null, // Jika tidak ada, return null
   });
 });
 

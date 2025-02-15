@@ -3,6 +3,7 @@
 import pandas as pd
 import os
 
+pd.set_option('future.no_silent_downcasting', True)
 # Assuming your xlsx file is in your Google Drive, replace with actual path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(script_dir,"uploaded_file.xlsx")
@@ -52,4 +53,5 @@ filtered_units = unit_kerja_counts[unit_kerja_counts >= threshold].index
 df_filtered = df[df['UNIT KERJA'].isin(filtered_units)]
 
 # Save to an Excel file
-df_filtered.to_excel("data_ready.xlsx", index=False)
+output_file_path = os.path.join(script_dir,"data_ready.xlsx")
+df_filtered.to_excel(output_file_path, index=False)
