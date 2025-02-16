@@ -8,7 +8,15 @@ const { spawn } = require("child_process"); // Untuk menjalankan script Python
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
+
+// Serve static files (e.g., CSS, JS, images) from the "static" directory
+app.use('/static', express.static(path.join(__dirname, 'static')));
+
+// Serve uploaded files from the "uploads" directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+}));
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

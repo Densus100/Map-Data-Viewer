@@ -36,9 +36,14 @@ gmm_html_content = ""
 
 
 # Function to convert a DataFrame to a properly formatted DataTable HTML
+def link_to_datatable_html(link, title, filename):
+    download_link = f'<a id="gmm-download-link" download>📥 Download {filename}</a>'
+    return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-gmm-table' class='btn btn-primary'>Load GMM Table</button> <div id='gmm_output_container'></div> \n\n"
+
 def df_to_datatable_html(df, title, table_id, index):
+    """Convert DataFrame to an HTML DataTable, adding sorting for 'Total_Score' if present."""
     df_html = df.to_html(index=index, border=0)  # Convert DataFrame to HTML, remove border
-    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result" style="width:100%">')  # Fix table formatting
+    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab2" style="width:100%">')  # Fix table formatting
     return f"<h2>{title}</h2>\n" + df_html +  "\n<br/><br/>\n"
 
 
@@ -120,10 +125,11 @@ df_gmm['Cluster_Label'] = df_gmm['Cluster'].map(cluster_mapping)
 # ==============================
 
 # Save the clustered dataset as a CSV file
-# output_file = os.path.join(script_dir, "gmm_output.csv")
-# df_gmm.to_csv(output_file, index=False)
+output_file = os.path.join(script_dir, "gmm_output.csv")
+df_gmm.to_csv(output_file)
 # gmm_html_content += f"<h2>GMM Output</h2>\n{df_gmm.to_html(index=True)}<br/><br/>\n"
-gmm_html_content += df_to_datatable_html(df_gmm, "GMM Output", "gmm_output", True)
+# gmm_html_content += df_to_datatable_html(df_gmm, "GMM Output", "gmm_output", True)
+gmm_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/gmm_model/gmm_output.csv", "GMM Output", "gmm_output.csv")
 
 
 # ==============================
