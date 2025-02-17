@@ -22,6 +22,10 @@ $(document).ready(function () {
     var formData = new FormData();
     formData.append("file", file);
 
+    setTimeout(() => {
+      $("#loading-overlay").fadeIn("slow"); // Hide spinner after the page is ready
+    }, 1000);
+
     $.ajax({
       url: `http://${serverIP}:3000/upload`, // ✅ Gunakan template literal
       method: "POST",
@@ -29,12 +33,22 @@ $(document).ready(function () {
       contentType: false,
       processData: false,
       success: function (response) {
+        setTimeout(() => {
+          $("#loading-overlay").fadeOut("slow"); // Hide spinner after the page is ready
+        }, 1000);
+
         console.log(response);
         alert("File berhasil di-upload dan diproses!");
+        location.reload();
       },
       error: function (error) {
+        setTimeout(() => {
+          $("#loading-overlay").fadeOut("slow"); // Hide spinner after the page is ready
+        }, 1000);
+
         console.error("Terjadi error saat upload:", error);
         alert("Gagal upload file.");
+        location.reload();
       },
     });
   });
@@ -84,7 +98,10 @@ $(document).ready(function () {
         // Redraw the table
         table.draw();
       })
-      .catch((error) => console.error("Error reading file: ", error));
+      .catch((error) => {
+        console.error("Error reading file: ", error)
+        $("#last-update").html("File Not Found! <br>Please upload a new one.")
+      });
   }
   loadExcelFromServer();
 
@@ -237,7 +254,7 @@ $(document).ready(function () {
           imagesDiv.show(); // Tampilkan container gambar
           data.images.forEach((img) => {
             imagesDiv.append(
-              `<img src="http://${serverIP}:3000/uploads/${img}" class="img-fluid mb-3">`
+              `<img src="http://${serverIP}:3000/uploads/${img}" style="max-width: 50%;" class="img-fluid mb-3">`
             );
           });
         } else {
@@ -328,7 +345,7 @@ $(document).ready(function () {
         data.images.forEach((img) => {
           let imgSrc = `http://${serverIP}:3000/uploads/${img}`;
           if (!existingImages.includes(imgSrc)) {
-            imagesDiv.append(`<img src="${imgSrc}" class="img-fluid mb-3">`);
+            imagesDiv.append(`<img src="${imgSrc}" style="max-width: 50%;" class="img-fluid mb-3">`);
           }
         });
 
