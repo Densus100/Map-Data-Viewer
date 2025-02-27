@@ -4,15 +4,23 @@ $(document).ready(function () {
     autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
   });
 
-
-
   $("table").DataTable();
 
   // Use browser's IP for the request (this assumes you are using the correct network)
   var serverIP = window.location.hostname; // This will dynamically fetch the IP of the server
 
+  const validUsername = "admin";
+  let validPassword = "123";
+
   $("#file-upload-btn").click(function () {
-    $("#file-upload").click();
+    const username = prompt("Enter Username:");
+    let password = prompt("Enter password: ");
+
+    if (username === validUsername && password === validPassword) {
+      $("#file-upload").click();
+    } else {
+      alert("Username atau Password salah. Anda tidak dapat mengupload data.");
+    }
   });
 
   $("#file-upload").change(function (event) {
@@ -99,8 +107,8 @@ $(document).ready(function () {
         table.draw();
       })
       .catch((error) => {
-        console.error("Error reading file: ", error)
-        $("#last-update").html("File Not Found! <br>Please upload a new one.")
+        console.error("Error reading file: ", error);
+        $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
   loadExcelFromServer();
@@ -136,8 +144,8 @@ $(document).ready(function () {
 
       // Fetch CSV file and process it
       fetch(fileUrl)
-        .then(response => response.arrayBuffer()) // Read as binary buffer
-        .then(buffer => {
+        .then((response) => response.arrayBuffer()) // Read as binary buffer
+        .then((buffer) => {
           let data = new Uint8Array(buffer);
           let workbook = XLSX.read(data, { type: "array" });
           let sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -149,7 +157,11 @@ $(document).ready(function () {
           tableContainer.html(`
                     <table id="${model}_output" class="display output_result_tab2" style="width:100%">
                         <thead>
-                            <tr>${headerRow.map(col => `<th class="text-center">${col}</th>`).join("")}</tr>
+                            <tr>${headerRow
+                              .map(
+                                (col) => `<th class="text-center">${col}</th>`
+                              )
+                              .join("")}</tr>
                         </thead>
                         <tbody></tbody>
                     </table>
@@ -161,8 +173,10 @@ $(document).ready(function () {
           }); // Initialize DataTable
 
           // ✅ Insert table rows
-          jsonData.slice(1).forEach(row => {
-            let rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          jsonData.slice(1).forEach((row) => {
+            let rowData = headerRow.map((_, i) =>
+              row[i] !== undefined ? row[i] : ""
+            );
             if (rowData.length === headerRow.length) {
               table.row.add(rowData);
             }
@@ -174,13 +188,12 @@ $(document).ready(function () {
           // ✅ Remove the loading spinner
           tableContainer.find(".spinner-border").remove();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error loading CSV:", error);
           tableContainer.html("<p class='text-danger'>Failed to load CSV.</p>");
         });
     });
   }
-
 
   // Sembunyikan tombol reset saat halaman pertama dimuat
   $("#reset-filter").hide();
@@ -284,14 +297,12 @@ $(document).ready(function () {
           $(`#${model}-download-link`).attr("href", modelDownloadLink);
           loadModelTable(tab);
         }
-
       })
       .catch((error) => console.error("Error checking images:", error));
   }
 
   // Cek gambar saat halaman pertama dimuat (default tab1)
   checkExistingImages("tab1");
-
 
   // Event listener ketika tab diklik
   $(".nav-link").on("click", function () {
@@ -345,7 +356,9 @@ $(document).ready(function () {
         data.images.forEach((img) => {
           let imgSrc = `http://${serverIP}:3000/uploads/${img}`;
           if (!existingImages.includes(imgSrc)) {
-            imagesDiv.append(`<img src="${imgSrc}" style="max-width: 50%;" class="img-fluid mb-3">`);
+            imagesDiv.append(
+              `<img src="${imgSrc}" style="max-width: 50%;" class="img-fluid mb-3">`
+            );
           }
         });
 
@@ -380,5 +393,4 @@ $(document).ready(function () {
   setTimeout(() => {
     $("#loading-overlay").fadeOut("slow"); // Hide spinner after the page is ready
   }, 1000); // Adjust time as needed
-
 });
