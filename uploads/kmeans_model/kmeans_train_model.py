@@ -214,8 +214,8 @@ metrics_dict = {
 metrics_df = pd.DataFrame(metrics_dict)
 
 # Define output file path
-# metrics_file = os.path.join(script_dir, "kmeans_metrics.csv")
-# metrics_df.to_csv(metrics_file, index=False)
+metrics_file = os.path.join(script_dir, "kmeans_metrics.csv")
+metrics_df.to_csv(metrics_file, index=False)
 # kmeans_html_content += f"<h2>K-Means Metrics</h2>\n{metrics_df.to_html(index=False)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(metrics_df, "K-Means Metrics", "kmeans_metrics", False)
 
@@ -272,8 +272,8 @@ report = classification_report(
 
 # Convert classification report to DataFrame and save as CSV
 report_df = pd.DataFrame(report).transpose()
-# output_report = os.path.join(script_dir, "kmeans_classification_report.csv")
-# report_df.to_csv(output_report, index=True)
+output_report = os.path.join(script_dir, "kmeans_classification_report.csv")
+report_df.to_csv(output_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Classification Report</h2>\n{report_df.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(report_df, "K-Means Classification Report", "kmeans_classification_report", True)
 
@@ -367,8 +367,8 @@ cluster_count_per_unit_sorted = cluster_count_per_unit.sort_values(by='Total_Sco
 # print("cluster_count_per_unit_sorted")
 # print(cluster_count_per_unit_sorted)
 
-# cluster_count_per_unit_sorted_report = os.path.join(script_dir, "kmeans_best_unit_kerja_report.csv")
-# cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
+cluster_count_per_unit_sorted_report = os.path.join(script_dir, "kmeans_best_unit_kerja_report.csv")
+cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Group By UNIT KERJA</h2>\n{cluster_count_per_unit_sorted.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(cluster_count_per_unit_sorted, "K-Means Group By UNIT KERJA", "kmeans_best_unit_kerja_report", True)
 
@@ -405,8 +405,8 @@ cluster_count_per_lokasi_sorted = cluster_count_per_lokasi.sort_values(by='Total
 # print("cluster_count_per_lokasi_sorted")
 # print(cluster_count_per_lokasi_sorted)
 
-# cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "kmeans_best_lokasi_report.csv")
-# cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
+cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "kmeans_best_lokasi_report.csv")
+cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Group By LOKASI</h2>\n{cluster_count_per_lokasi_sorted.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(cluster_count_per_lokasi_sorted, "K-Means Group By LOKASI", "kmeans_best_lokasi_report", True)
 
@@ -443,8 +443,8 @@ cluster_count_per_status_sorted = cluster_count_per_status.sort_values(by='Total
 # print("cluster_count_per_status_sorted")
 # print(cluster_count_per_status_sorted)
 
-# cluster_count_per_status_sorted_report = os.path.join(script_dir, "kmeans_best_status_report.csv")
-# cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
+cluster_count_per_status_sorted_report = os.path.join(script_dir, "kmeans_best_status_report.csv")
+cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Group By STATUS</h2>\n{cluster_count_per_status_sorted.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(cluster_count_per_status_sorted, "K-Means Group By STATUS", "kmeans_best_status_report", True)
 
@@ -481,8 +481,8 @@ cluster_count_per_jk_sorted = cluster_count_per_jk.sort_values(by='Total_Score',
 # print("cluster_count_per_jk_sorted")
 # print(cluster_count_per_jk_sorted)
 
-# cluster_count_per_jk_sorted_report = os.path.join(script_dir, "kmeans_best_jenis_kelamin_report.csv")
-# cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
+cluster_count_per_jk_sorted_report = os.path.join(script_dir, "kmeans_best_jenis_kelamin_report.csv")
+cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Group By JENIS KELAMIN</h2>\n{cluster_count_per_jk_sorted.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(cluster_count_per_jk_sorted, "K-Means Group By JENIS KELAMIN", "kmeans_best_jenis_kelamin_report", True)
 
