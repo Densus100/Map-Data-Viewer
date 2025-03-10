@@ -265,12 +265,14 @@ $(document).ready(function () {
         // Handle gambar
         if (data.images.length > 0) {
           imagesDiv.show(); // Tampilkan container gambar
+          $(`#${model}-download-btn`).show();
           data.images.forEach((img) => {
             imagesDiv.append(
               `<img src="http://${serverIP}:3000/uploads/${img}" style="max-width: 50%;" class="img-fluid mb-3">`
             );
           });
         } else {
+          $(`#${model}-download-btn`).hide();
           imagesDiv.hide(); // Sembunyikan jika tidak ada gambar
         }
 
@@ -387,6 +389,55 @@ $(document).ready(function () {
       .catch((error) => {
         console.error("Error:", error);
         outputDiv.html("<p class='text-danger'>Failed to load data.</p>");
+      });
+  });
+
+  $(".download-pdf-btn").click(function (event) {
+    event.preventDefault();
+    console.log("RUN");
+
+    var tab = $(this).data("tab");
+    var model = "";
+
+    if (tab == "tab1") {
+      model = "kmeans";
+    } else if (tab == "tab2") {
+      model = "gmm";
+    } else if (tab == "tab3") {
+      model = "hierarchical";
+    }
+    var tabContentContainer = $("#myTabContent");
+
+    tabContentContainer.html(`
+      <p class="text-center">Generating PDF...<br>
+        <div class="spinner-border text-danger" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </p>
+    `);
+    tabContentContainer.css("display", "inline");
+    console.log("RUN2");
+
+    // Fetch request to generate PDF and download it
+    fetch(`http://${serverIP}:3000/run-${model}-pdf`)
+      .then((response) => response.blob()) // Get the response as a Blob (PDF file)
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${model}_report.pdf`;
+        link.click();
+
+        // Reset the content of #myTabContent after download starts
+        tabContentContainer.empty(); // Clear the spinner or any content
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("There was an error generating the PDF.");
+
+        // Reset the content of #myTabContent in case of error
+        tabContentContainer.html(
+          "<p class='text-danger'>There was an error generating the PDF.</p>"
+        );
       });
   });
 
