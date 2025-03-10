@@ -201,8 +201,8 @@ metrics_dict = {
 metrics_df = pd.DataFrame(metrics_dict)
 
 # Define output file path
-# metrics_file = os.path.join(script_dir, "gmm_metrics.csv")
-# metrics_df.to_csv(metrics_file, index=False)
+metrics_file = os.path.join(script_dir, "gmm_metrics.csv")
+metrics_df.to_csv(metrics_file, index=False)
 # gmm_html_content += f"<h2>GMM Metrics</h2>\n{metrics_df.to_html(index=False)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(metrics_df, "GMM Metrics", "gmm_metrics", False)
 
@@ -258,8 +258,8 @@ report = classification_report(
 
 # Convert classification report to DataFrame and save as CSV
 report_df = pd.DataFrame(report).transpose()
-# output_report = os.path.join(script_dir, "gmm_classification_report.csv")
-# report_df.to_csv(output_report, index=True)
+output_report = os.path.join(script_dir, "gmm_classification_report.csv")
+report_df.to_csv(output_report, index=True)
 # gmm_html_content += f"<h2>GMM Classification Report</h2>\n{report_df.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(report_df, "GMM Classification Report", "gmm_classification_report", True)
 
@@ -353,8 +353,8 @@ cluster_count_per_unit_sorted = cluster_count_per_unit.sort_values(by='Total_Sco
 # print("cluster_count_per_unit_sorted")
 # print(cluster_count_per_unit_sorted)
 
-# cluster_count_per_unit_sorted_report = os.path.join(script_dir, "gmm_best_unit_kerja_report.csv")
-# cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
+cluster_count_per_unit_sorted_report = os.path.join(script_dir, "gmm_best_unit_kerja_report.csv")
+cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
 # gmm_html_content += f"<h2>GMM Group By UNIT KERJA</h2>\n{cluster_count_per_unit_sorted.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(cluster_count_per_unit_sorted, "GMM Group By UNIT KERJA", "gmm_best_unit_kerja_report", True)
 
@@ -391,8 +391,8 @@ cluster_count_per_lokasi_sorted = cluster_count_per_lokasi.sort_values(by='Total
 # print("cluster_count_per_lokasi_sorted")
 # print(cluster_count_per_lokasi_sorted)
 
-# cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "gmm_best_lokasi_report.csv")
-# cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
+cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "gmm_best_lokasi_report.csv")
+cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
 # gmm_html_content += f"<h2>GMM Group By LOKASI</h2>\n{cluster_count_per_lokasi_sorted.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(cluster_count_per_lokasi_sorted, "GMM Group By LOKASI", "gmm_best_lokasi_report", True)
 
@@ -429,8 +429,8 @@ cluster_count_per_status_sorted = cluster_count_per_status.sort_values(by='Total
 # print("cluster_count_per_status_sorted")
 # print(cluster_count_per_status_sorted)
 
-# cluster_count_per_status_sorted_report = os.path.join(script_dir, "gmm_best_status_report.csv")
-# cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
+cluster_count_per_status_sorted_report = os.path.join(script_dir, "gmm_best_status_report.csv")
+cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
 # gmm_html_content += f"<h2>GMM Group By STATUS</h2>\n{cluster_count_per_status_sorted.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(cluster_count_per_status_sorted, "GMM Group By STATUS", "gmm_best_status_report", True)
 
@@ -467,8 +467,8 @@ cluster_count_per_jk_sorted = cluster_count_per_jk.sort_values(by='Total_Score',
 # print("cluster_count_per_jk_sorted")
 # print(cluster_count_per_jk_sorted)
 
-# cluster_count_per_jk_sorted_report = os.path.join(script_dir, "gmm_best_jenis_kelamin_report.csv")
-# cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
+cluster_count_per_jk_sorted_report = os.path.join(script_dir, "gmm_best_jenis_kelamin_report.csv")
+cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
 # gmm_html_content += f"<h2>GMM Group By JENIS KELAMIN</h2>\n{cluster_count_per_jk_sorted.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(cluster_count_per_jk_sorted, "GMM Group By JENIS KELAMIN", "gmm_best_jenis_kelamin_report", True)
 

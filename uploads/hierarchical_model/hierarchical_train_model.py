@@ -218,8 +218,8 @@ metrics_dict = {
 metrics_df = pd.DataFrame(metrics_dict)
 
 # Define output file path
-# metrics_file = os.path.join(script_dir, "hierarchical_metrics.csv")
-# metrics_df.to_csv(metrics_file, index=False)
+metrics_file = os.path.join(script_dir, "hierarchical_metrics.csv")
+metrics_df.to_csv(metrics_file, index=False)
 # hierarchical_html_content += f"<h2>Hierarchical Metrics</h2>\n{metrics_df.to_html(index=False)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(metrics_df, "Hierarchical Metrics", "hierarchical_metrics", False)
 
@@ -275,8 +275,8 @@ report = classification_report(
 
 # Convert classification report to DataFrame and save as CSV
 report_df = pd.DataFrame(report).transpose()
-# output_report = os.path.join(script_dir, "hierarchical_classification_report.csv")
-# report_df.to_csv(output_report, index=True)
+output_report = os.path.join(script_dir, "hierarchical_classification_report.csv")
+report_df.to_csv(output_report, index=True)
 # hierarchical_html_content += f"<h2>Hierarchical Classification Report</h2>\n{report_df.to_html(index=True)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(report_df, "Hierarchical Classification Report", "hierarchical_classification_report", True)
 
@@ -378,8 +378,8 @@ cluster_count_per_unit_sorted = cluster_count_per_unit.sort_values(by='Total_Sco
 # print("cluster_count_per_unit_sorted")
 # print(cluster_count_per_unit_sorted)
 
-# cluster_count_per_unit_sorted_report = os.path.join(script_dir, "hierarchical_best_unit_kerja_report.csv")
-# cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
+cluster_count_per_unit_sorted_report = os.path.join(script_dir, "hierarchical_best_unit_kerja_report.csv")
+cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
 # hierarchical_html_content += f"<h2>Hierarchical Group By UNIT KERJA</h2>\n{cluster_count_per_unit_sorted.to_html(index=True)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(cluster_count_per_unit_sorted, "Hierarchical Group By UNIT KERJA", "hierarchical_best_unit_kerja_report", True)
 
@@ -416,8 +416,8 @@ cluster_count_per_lokasi_sorted = cluster_count_per_lokasi.sort_values(by='Total
 # print("cluster_count_per_lokasi_sorted")
 # print(cluster_count_per_lokasi_sorted)
 
-# cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "hierarchical_best_lokasi_report.csv")
-# cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
+cluster_count_per_lokasi_sorted_report = os.path.join(script_dir, "hierarchical_best_lokasi_report.csv")
+cluster_count_per_lokasi_sorted.to_csv(cluster_count_per_lokasi_sorted_report, index=True)
 # hierarchical_html_content += f"<h2>Hierarchical Group By LOKASI</h2>\n{cluster_count_per_lokasi_sorted.to_html(index=True)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(cluster_count_per_lokasi_sorted, "Hierarchical Group By LOKASI", "hierarchical_best_lokasi_report", True)
 
@@ -454,8 +454,8 @@ cluster_count_per_status_sorted = cluster_count_per_status.sort_values(by='Total
 # print("cluster_count_per_status_sorted")
 # print(cluster_count_per_status_sorted)
 
-# cluster_count_per_status_sorted_report = os.path.join(script_dir, "hierarchical_best_status_report.csv")
-# cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
+cluster_count_per_status_sorted_report = os.path.join(script_dir, "hierarchical_best_status_report.csv")
+cluster_count_per_status_sorted.to_csv(cluster_count_per_status_sorted_report, index=True)
 # hierarchical_html_content += f"<h2>Hierarchical Group By STATUS</h2>\n{cluster_count_per_status_sorted.to_html(index=True)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(cluster_count_per_status_sorted, "Hierarchical Group By STATUS", "hierarchical_best_status_report", True)
 
@@ -492,8 +492,8 @@ cluster_count_per_jk_sorted = cluster_count_per_jk.sort_values(by='Total_Score',
 # print("cluster_count_per_jk_sorted")
 # print(cluster_count_per_jk_sorted)
 
-# cluster_count_per_jk_sorted_report = os.path.join(script_dir, "hierarchical_best_jenis_kelamin_report.csv")
-# cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
+cluster_count_per_jk_sorted_report = os.path.join(script_dir, "hierarchical_best_jenis_kelamin_report.csv")
+cluster_count_per_jk_sorted.to_csv(cluster_count_per_jk_sorted_report, index=True)
 # hierarchical_html_content += f"<h2>Hierarchical Group By JENIS KELAMIN</h2>\n{cluster_count_per_jk_sorted.to_html(index=True)}<br/><br/>\n"
 hierarchical_html_content += df_to_datatable_html(cluster_count_per_jk_sorted, "Hierarchical Group By JENIS KELAMIN", "hierarchical_best_jenis_kelamin_report", True)
 
