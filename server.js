@@ -3,20 +3,19 @@ const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
+const { exec } = require("child_process");
 const { spawn } = require("child_process"); // Untuk menjalankan script Python
 
 const app = express();
 const port = 3000;
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: "*" }));
 
 // Serve static files (e.g., CSS, JS, images) from the "static" directory
-app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use("/static", express.static(path.join(__dirname, "static")));
 
 // Serve uploaded files from the "uploads" directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-}));
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -230,6 +229,63 @@ app.get("/check-existing-images/:tab", (req, res) => {
   res.json({
     images: existingImages,
     text: txtExists ? txtContent : null, // Jika tidak ada, return null
+  });
+});
+
+app.get("/run-kmeans-pdf", (req, res) => {
+  const scriptPath = path.join(
+    __dirname,
+    "uploads",
+    "kmeans_model",
+    "kmeans_pdf.py"
+  );
+
+  exec(`python3 ${scriptPath}`, (err, stdout, stderr) => {
+    if (err) {
+      console.error("Error executing Python script:", err);
+      return res.status(500).send("Error generating KMeans PDF");
+    }
+    res.sendFile(
+      path.join(__dirname, "uploads", "kmeans_model", "kmeans_report.pdf")
+    );
+  });
+});
+
+app.get("/run-gmm-pdf", (req, res) => {
+  const scriptPath = path.join(__dirname, "uploads", "gmm_model", "gmm_pdf.py");
+
+  exec(`python3 ${scriptPath}`, (err, stdout, stderr) => {
+    if (err) {
+      console.error("Error executing Python script:", err);
+      return res.status(500).send("Error generating GMM PDF");
+    }
+    res.sendFile(
+      path.join(__dirname, "uploads", "gmm_model", "gmm_report.pdf")
+    );
+  });
+});
+
+app.get("/run-hierarchical-pdf", (req, res) => {
+  const scriptPath = path.join(
+    __dirname,
+    "uploads",
+    "hierarchical_model",
+    "hierarchical_pdf.py"
+  );
+
+  exec(`python3 ${scriptPath}`, (err, stdout, stderr) => {
+    if (err) {
+      console.error("Error executing Python script:", err);
+      return res.status(500).send("Error generating Hierarchical PDF");
+    }
+    res.sendFile(
+      path.join(
+        __dirname,
+        "uploads",
+        "hierarchical_model",
+        "hierarchical_report.pdf"
+      )
+    );
   });
 });
 
