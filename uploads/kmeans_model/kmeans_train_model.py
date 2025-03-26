@@ -70,7 +70,7 @@ file_path = os.path.join(script_dir, "..", "data_ready.xlsx")
 
 # Try to load the Excel file; exit script if an error occurs
 try:
-    df = pd.read_excel(file_path, index_col=0)
+    df = pd.read_excel(file_path)
 except FileNotFoundError:
     print(f"Error: File not found at {file_path}")
     sys.exit(1)  # Exit script if file is missing
@@ -87,7 +87,7 @@ except Exception as e:
 doc_columns = [
     "FOTO 1/2 BADAN (*)", "FOTO FULL BODY (*)", "AKTA LAHIR (*)", 
     "KTP (*)", "NPWP(*)", "SUMPAH PNS", "NOTA BKN", "SPMT CPNS", 
-    "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS"
+    "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS", "NO KK"
 ]
 
 # Create a copy of the dataframe to avoid modifying original data
@@ -150,6 +150,7 @@ kmeans_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/k
 # ==============================
 
 plt.figure(figsize=(10, 6))  # Set figure size
+
 
 # Loop through each cluster label and plot data points
 for label in ['Low', 'Medium', 'High']:
@@ -371,6 +372,42 @@ cluster_count_per_unit_sorted_report = os.path.join(script_dir, "kmeans_best_uni
 cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
 # kmeans_html_content += f"<h2>K-Means Group By UNIT KERJA</h2>\n{cluster_count_per_unit_sorted.to_html(index=True)}<br/><br/>\n"
 kmeans_html_content += df_to_datatable_html(cluster_count_per_unit_sorted, "K-Means Group By UNIT KERJA", "kmeans_best_unit_kerja_report", True)
+
+
+# =============================================
+
+# Group by 'TINGKAT' and get the counts of each cluster label
+cluster_count_per_tingkat = df_kmeans.groupby('TINGKAT')['Cluster_Label'].value_counts().unstack(fill_value=0)
+
+# Reorder the columns to match 'High', 'Medium', 'Low'
+cluster_count_per_tingkat = cluster_count_per_tingkat[['High', 'Medium', 'Low']]
+
+cluster_count_per_tingkat['Total'] = cluster_count_per_tingkat['High'] + cluster_count_per_tingkat['Medium'] + cluster_count_per_tingkat['Low']
+
+# Display the result
+# print(cluster_count_per_tingkat)
+
+# Assign weights to each cluster
+weights = {'High': 3, 'Medium': 2, 'Low': 1}
+
+# Calculate weighted score for each data
+cluster_count_per_tingkat['Total_Score'] = (
+    cluster_count_per_tingkat['High'] * weights['High'] +
+    cluster_count_per_tingkat['Medium'] * weights['Medium'] +
+    cluster_count_per_tingkat['Low'] * weights['Low']
+)
+
+# Sort by Total_Score in descending order to rank the tingkat
+cluster_count_per_tingkat_sorted = cluster_count_per_tingkat.sort_values(by='Total_Score', ascending=False)
+
+# Display the results
+# print("cluster_count_per_tingkat_sorted")
+# print(cluster_count_per_tingkat_sorted)
+
+cluster_count_per_tingkat_sorted_report = os.path.join(script_dir, "kmeans_best_tingkat_report.csv")
+cluster_count_per_tingkat_sorted.to_csv(cluster_count_per_tingkat_sorted_report, index=True)
+# kmeans_html_content += f"<h2>K-Means Group By TINGKAT</h2>\n{cluster_count_per_tingkat_sorted.to_html(index=True)}<br/><br/>\n"
+kmeans_html_content += df_to_datatable_html(cluster_count_per_tingkat_sorted, "K-Means Group By TINGKAT", "kmeans_best_tingkat_report", True)
 
 
 

@@ -57,7 +57,7 @@ file_path = os.path.join(script_dir, "..", "data_ready.xlsx")
 
 # Try to load the Excel file; exit script if an error occurs
 try:
-    df = pd.read_excel(file_path, index_col=0)
+    df = pd.read_excel(file_path)
 except FileNotFoundError:
     print(f"Error: File not found at {file_path}")
     sys.exit(1)  # Exit script if file is missing
@@ -74,7 +74,7 @@ except Exception as e:
 doc_columns = [
     "FOTO 1/2 BADAN (*)", "FOTO FULL BODY (*)", "AKTA LAHIR (*)", 
     "KTP (*)", "NPWP(*)", "SUMPAH PNS", "NOTA BKN", "SPMT CPNS", 
-    "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS"
+    "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS", "NO KK"
 ]
 
 # Create a copy of the dataframe to avoid modifying original data
@@ -357,6 +357,42 @@ cluster_count_per_unit_sorted_report = os.path.join(script_dir, "gmm_best_unit_k
 cluster_count_per_unit_sorted.to_csv(cluster_count_per_unit_sorted_report, index=True)
 # gmm_html_content += f"<h2>GMM Group By UNIT KERJA</h2>\n{cluster_count_per_unit_sorted.to_html(index=True)}<br/><br/>\n"
 gmm_html_content += df_to_datatable_html(cluster_count_per_unit_sorted, "GMM Group By UNIT KERJA", "gmm_best_unit_kerja_report", True)
+
+
+# =============================================
+
+# Group by 'TINGKAT' and get the counts of each cluster label
+cluster_count_per_tingkat = df_gmm.groupby('TINGKAT')['Cluster_Label'].value_counts().unstack(fill_value=0)
+
+# Reorder the columns to match 'High', 'Medium', 'Low'
+cluster_count_per_tingkat = cluster_count_per_tingkat[['High', 'Medium', 'Low']]
+
+cluster_count_per_tingkat['Total'] = cluster_count_per_tingkat['High'] + cluster_count_per_tingkat['Medium'] + cluster_count_per_tingkat['Low']
+
+# Display the result
+# print(cluster_count_per_tingkat)
+
+# Assign weights to each cluster
+weights = {'High': 3, 'Medium': 2, 'Low': 1}
+
+# Calculate weighted score for each data
+cluster_count_per_tingkat['Total_Score'] = (
+    cluster_count_per_tingkat['High'] * weights['High'] +
+    cluster_count_per_tingkat['Medium'] * weights['Medium'] +
+    cluster_count_per_tingkat['Low'] * weights['Low']
+)
+
+# Sort by Total_Score in descending order to rank the tingkat
+cluster_count_per_tingkat_sorted = cluster_count_per_tingkat.sort_values(by='Total_Score', ascending=False)
+
+# Display the results
+# print("cluster_count_per_tingkat_sorted")
+# print(cluster_count_per_tingkat_sorted)
+
+cluster_count_per_tingkat_sorted_report = os.path.join(script_dir, "gmm_best_tingkat_report.csv")
+cluster_count_per_tingkat_sorted.to_csv(cluster_count_per_tingkat_sorted_report, index=True)
+# gmm_html_content += f"<h2>GMM Group By TINGKAT</h2>\n{cluster_count_per_tingkat_sorted.to_html(index=True)}<br/><br/>\n"
+gmm_html_content += df_to_datatable_html(cluster_count_per_tingkat_sorted, "GMM Group By TINGKAT", "gmm_best_tingkat_report", True)
 
 
 

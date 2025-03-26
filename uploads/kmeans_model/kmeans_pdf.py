@@ -72,7 +72,7 @@ def add_table(pdf, title, csv_path, first_col_wider=False):
     num_columns = len(df.columns)
 
     if first_col_wider:
-        first_col_width = 50  # Slightly bigger first column
+        first_col_width = 73  # Slightly bigger first column
         remaining_width = total_width - first_col_width
         other_col_width = remaining_width / (num_columns - 1)
         col_widths = [first_col_width] + [other_col_width] * (num_columns - 1)
@@ -96,7 +96,7 @@ def add_table(pdf, title, csv_path, first_col_wider=False):
     pdf.set_font("Times", "", 5)
     for _, row in df.iterrows():
         for i, col in enumerate(df.columns):
-            text = str(row[col])[:45]  # Limit text length
+            text = str(row[col])[:68]  # Limit text length
             pdf.cell(col_widths[i], row_height, text, border=1, align="L")
         pdf.ln(row_height)
 
@@ -106,6 +106,7 @@ def add_table(pdf, title, csv_path, first_col_wider=False):
 add_table(pdf, "K-Means Metrics", os.path.join(script_dir, "kmeans_metrics.csv"))
 add_table(pdf, "K-Means Classification Report", os.path.join(script_dir, "kmeans_classification_report.csv"))
 add_table(pdf, "K-Means Group By UNIT KERJA", os.path.join(script_dir, "kmeans_best_unit_kerja_report.csv"), first_col_wider=True)
+add_table(pdf, "K-Means Group By TINGKAT", os.path.join(script_dir, "kmeans_best_tingkat_report.csv"))
 add_table(pdf, "K-Means Group By LOKASI", os.path.join(script_dir, "kmeans_best_lokasi_report.csv"))
 add_table(pdf, "K-Means Group By STATUS", os.path.join(script_dir, "kmeans_best_status_report.csv"))
 add_table(pdf, "K-Means Group By JENIS KELAMIN", os.path.join(script_dir, "kmeans_best_jenis_kelamin_report.csv"))

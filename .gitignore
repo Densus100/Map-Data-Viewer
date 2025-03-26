@@ -37,3 +37,6 @@ uploads/kmeans_model/kmeans_model.pkl
 uploads/kmeans_model/kmeans_output.csv
 uploads/kmeans_model/kmeans_pca.png
 uploads/kmeans_model/kmeans_report.pdf
+uploads/gmm_model/gmm_best_tingkat_report.csv
+uploads/hierarchical_model/hierarchical_best_tingkat_report.csv
+uploads/kmeans_model/kmeans_best_tingkat_report.csv
