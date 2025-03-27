@@ -9,7 +9,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(script_dir,"uploaded_file.xlsx")
 
 try:
-  df = pd.read_excel(file_path, index_col=0)
+  df = pd.read_excel(file_path, index_col=1)
 #   print(df.head()) # Print the first few rows to verify
 except FileNotFoundError:
   print(f"Error: File not found at {file_path}")

@@ -57,7 +57,7 @@ file_path = os.path.join(script_dir, "..", "data_ready.xlsx")
 
 # Try to load the Excel file; exit script if an error occurs
 try:
-    df = pd.read_excel(file_path)
+    df = pd.read_excel(file_path, index_col=0)
 except FileNotFoundError:
     print(f"Error: File not found at {file_path}")
     sys.exit(1)  # Exit script if file is missing
