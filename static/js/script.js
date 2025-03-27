@@ -196,14 +196,14 @@ $(document).ready(function () {
   }
 
   // Sembunyikan tombol reset saat halaman pertama dimuat
-  $("#reset-filter").hide();
+  // $("#reset-filter").hide();
 
   $("area").on("click", function (event) {
     event.preventDefault();
     const city = $(this).data("city");
     $("#selected-city").text("Filter Kota: " + city);
 
-    table.column(3).search(city).draw();
+    table.column(4).search(city).draw();
     if (city) {
       $("#reset-filter").show();
     }
@@ -211,14 +211,14 @@ $(document).ready(function () {
 
   $("#reset-filter").on("click", function () {
     $("#selected-city").text("Menampilkan Semua Kota");
-    table.column(3).search("").draw(); // Menghapus filter
+    table.column(4).search("").draw(); // Menghapus filter
 
     // ✅ Perbaikan: gunakan `$(this)`, bukan `$$(this)`
-    $(this).hide();
+    // $(this).hide();
   });
 
   table.on("draw", function () {
-    let filterApplied = table.column(3).search() !== "";
+    let filterApplied = table.column(4).search() !== "";
     $("#reset-filter").toggle(filterApplied);
   });
 
