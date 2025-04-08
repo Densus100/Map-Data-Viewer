@@ -45,7 +45,6 @@ $(document).ready(function () {
           $("#loading-overlay").fadeOut("slow"); // Hide spinner after the page is ready
         }, 1000);
 
-        console.log(response);
         alert("File berhasil di-upload dan diproses!");
         location.reload();
       },
@@ -114,7 +113,6 @@ $(document).ready(function () {
   loadExcelFromServer();
 
   function loadModelTable(tab) {
-    // console.log("loadModelTable");
 
     var model = false;
 
@@ -130,8 +128,6 @@ $(document).ready(function () {
       event.preventDefault();
       let fileUrl = `http://${serverIP}:3000/uploads/${model}_model/${model}_output.csv`; // Adjust file path if needed
       let tableContainer = $(`#${model}_output_container`); // This is where the table will be created
-
-      // console.log(`Loading CSV: ${fileUrl}`);
 
       // Show loading spinner
       tableContainer.html(`
@@ -326,9 +322,11 @@ $(document).ready(function () {
       model = "hierarchical";
     }
 
-    // $(`#images-${tab}`).hide(); // Sembunyikan container gambar
+    $("#loading-overlay").fadeIn("slow");
+
     let imagesDiv = $(`#images-${tab}`);
     imagesDiv.empty();
+
     var outputDiv = $(`#output-${tab}`);
 
     // Show loading animation FIRST before fetching data
@@ -365,6 +363,8 @@ $(document).ready(function () {
         });
 
         imagesDiv.show(); // Pastikan container gambar tampil
+        outputDiv.show();
+        $("#loading-overlay").fadeOut("slow");
 
         // Tampilkan tabel hasil
         outputDiv.html(`<pre>${data.content}</pre>`); // Menampilkan isi file dalam elemen <pre>
@@ -377,8 +377,6 @@ $(document).ready(function () {
           scrollX: true,
           // autoWidth: false,
         });
-
-        outputDiv.show();
 
         if (data.content) {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/${model}_model/${model}_output.csv`;
@@ -394,7 +392,6 @@ $(document).ready(function () {
 
   $(".download-pdf-btn").click(function (event) {
     event.preventDefault();
-    console.log("RUN");
 
     var tab = $(this).data("tab");
     var model = "";
@@ -406,17 +403,9 @@ $(document).ready(function () {
     } else if (tab == "tab3") {
       model = "hierarchical";
     }
-    var tabContentContainer = $("#myTabContent");
 
-    tabContentContainer.html(`
-      <p class="text-center">Generating PDF...<br>
-        <div class="spinner-border text-danger" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </p>
-    `);
-    tabContentContainer.css("display", "inline");
-    console.log("RUN2");
+    $("#loading-overlay").fadeIn("slow"); // Show spinner
+
 
     // Fetch request to generate PDF and download it
     fetch(`http://${serverIP}:3000/run-${model}-pdf`)
@@ -428,7 +417,9 @@ $(document).ready(function () {
         link.click();
 
         // Reset the content of #myTabContent after download starts
-        tabContentContainer.empty(); // Clear the spinner or any content
+        $("#loading-overlay").fadeOut("slow");
+
+
       })
       .catch((error) => {
         console.error("Error:", error);
