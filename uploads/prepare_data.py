@@ -75,7 +75,7 @@ df_filtered.loc[:, doc_columns] = df_filtered[doc_columns].apply(pd.to_numeric, 
 grouped_df = df_filtered.groupby(group_cols)[doc_columns].sum().reset_index()
 
 # Optional: Add total document count
-grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
+# grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
 
 # Add new index starting from 1 and name it 'NO'
 grouped_df.index += 1
