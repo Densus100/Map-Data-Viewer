@@ -79,4 +79,4 @@ grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
 
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view.xlsx")
-grouped_df.to_excel(output_file_path, index=False)
+grouped_df.to_excel(output_file_path, index=True)
