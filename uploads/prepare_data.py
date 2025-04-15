@@ -77,6 +77,10 @@ grouped_df = df_filtered.groupby(group_cols)[doc_columns].sum().reset_index()
 # Optional: Add total document count
 grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
 
-# Save to Excel
+# Add new index starting from 1 and name it 'NO'
+grouped_df.index += 1
+grouped_df.index.name = 'NO'
+
+# Save to Excel, now it will include the 'NO' index
 output_file_path = os.path.join(script_dir, "data_view.xlsx")
 grouped_df.to_excel(output_file_path, index=True)
