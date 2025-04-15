@@ -77,6 +77,10 @@ grouped_df = df_filtered.groupby(group_cols)[doc_columns].sum().reset_index()
 # Optional: Add total document count
 # grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
 
+# Move 'BULAN' and 'TAHUN' to the end
+cols = [col for col in grouped_df.columns if col not in ['BULAN', 'TAHUN']] + ['BULAN', 'TAHUN']
+grouped_df = grouped_df[cols]
+
 # Add new index starting from 1 and name it 'NO'
 grouped_df.index += 1
 grouped_df.index.name = 'NO'
