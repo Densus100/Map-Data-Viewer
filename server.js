@@ -28,9 +28,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Endpoint untuk mendapatkan file hasil pemrosesan (data_ready.xlsx)
+// Endpoint untuk mendapatkan file hasil pemrosesan (data_view.xlsx)
 app.get("/uploads/excel-file", (req, res) => {
-  const filePath = path.join(__dirname, "uploads", "data_ready.xlsx");
+  const filePath = path.join(__dirname, "uploads", "data_view.xlsx");
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).send("File not found.");
@@ -39,9 +39,9 @@ app.get("/uploads/excel-file", (req, res) => {
   res.sendFile(filePath);
 });
 
-// Last update harus mengambil dari data_ready.xlsx
+// Last update harus mengambil dari data_view.xlsx
 app.get("/uploads/excel-file/last-update", (req, res) => {
-  const filePath = path.join(__dirname, "uploads", "data_ready.xlsx");
+  const filePath = path.join(__dirname, "uploads", "data_view.xlsx");
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).send("File not found.");
@@ -53,7 +53,7 @@ app.get("/uploads/excel-file/last-update", (req, res) => {
   res.json({ lastModified: lastModified.toISOString() });
 });
 
-// Upload file, jalankan prepare_data.py, dan pastikan data_ready.xlsx tersedia
+// Upload file, jalankan prepare_data.py, dan pastikan data_view.xlsx tersedia
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "Tidak ada file yang di-upload" });
@@ -61,7 +61,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
   console.log("File uploaded:", req.file);
 
-  const dataReadyPath = path.join(__dirname, "uploads", "data_ready.xlsx");
+  const dataReadyPath = path.join(__dirname, "uploads", "data_view.xlsx");
 
   console.log("Menjalankan prepare_data.py...");
   const pythonScriptPath = path.join(__dirname, "uploads", "prepare_data.py");
@@ -84,7 +84,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     console.log(`prepare_data.py selesai dengan kode ${code}`);
 
     if (code === 0) {
-      // Cek apakah data_ready.xlsx ada setelah proses selesai
+      // Cek apakah data_view.xlsx ada setelah proses selesai
       if (fs.existsSync(dataReadyPath)) {
         res.json({
           message: "File berhasil di-upload dan diproses!",

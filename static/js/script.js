@@ -154,10 +154,10 @@ $(document).ready(function () {
                     <table id="${model}_output" class="display output_result_tab2" style="width:100%">
                         <thead>
                             <tr>${headerRow
-                              .map(
-                                (col) => `<th class="text-center">${col}</th>`
-                              )
-                              .join("")}</tr>
+              .map(
+                (col) => `<th class="text-center">${col}</th>`
+              )
+              .join("")}</tr>
                         </thead>
                         <tbody></tbody>
                     </table>
