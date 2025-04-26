@@ -4,7 +4,22 @@ $(document).ready(function () {
     autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
   });
 
-  $("table").DataTable();
+  $("#table_tingkat").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
+  $("#table_lokasi").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
+  $("#table_status").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
+  $("#table_jeniskelamin").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
 
   // Use browser's IP for the request (this assumes you are using the correct network)
   var serverIP = window.location.hostname; // This will dynamically fetch the IP of the server
@@ -82,35 +97,228 @@ $(document).ready(function () {
         var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         var headerRow = jsonData[0];
-        var table = $(".dynamic-table").DataTable();
 
-        // ✅ Perbaikan dalam menambahkan header
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('.dynamic-table')) {
+          $('.dynamic-table').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
         $(".dynamic-table thead").empty().append(`
-          <tr>${headerRow
-            .map((col) => `<th class="text-center">${col}</th>`)
-            .join("")}</tr>
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
         `);
+        $(".dynamic-table tbody").empty(); // Clear body too
 
-        // ✅ Update isi tabel tanpa destroy
-        table.clear();
+        // Insert new data rows
         jsonData.slice(1).forEach((row) => {
-          var rowData = headerRow.map((_, i) =>
-            row[i] !== undefined ? row[i] : ""
-          );
-          if (rowData.length === headerRow.length) {
-            table.row.add(rowData);
-          }
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $(".dynamic-table tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
         });
 
-        // Redraw the table
-        table.draw();
+        // Reinitialize DataTable
+        table = $(".dynamic-table").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view.xlsx`;
+        $(`#view-download-link`).attr("href", modelDownloadLink);
+
       })
       .catch((error) => {
         console.error("Error reading file: ", error);
         $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
+
   loadExcelFromServer();
+
+  function loadViewTingkat() {
+    fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_tingkat`)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        var data = new Uint8Array(buffer);
+        var workbook = XLSX.read(data, { type: "array" });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        var headerRow = jsonData[0];
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#table_tingkat')) {
+          $('#table_tingkat').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
+        $("#table_tingkat thead").empty().append(`
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
+        `);
+        $("#table_tingkat tbody").empty(); // Clear body too
+
+        // Insert new data rows
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $("#table_tingkat tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
+        });
+
+        // Reinitialize DataTable
+        $("#table_tingkat").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_tingkat.xlsx`;
+        $(`#tingkat-download-link`).attr("href", modelDownloadLink);
+
+      })
+      .catch((error) => {
+        console.error("Error reading file: ", error);
+        $("#last-update").html("File Not Found! <br>Please upload a new one.");
+      });
+  }
+
+  function loadViewLokasi() {
+    fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_lokasi`)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        var data = new Uint8Array(buffer);
+        var workbook = XLSX.read(data, { type: "array" });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        var headerRow = jsonData[0];
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#table_lokasi')) {
+          $('#table_lokasi').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
+        $("#table_lokasi thead").empty().append(`
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
+        `);
+        $("#table_lokasi tbody").empty(); // Clear body too
+
+        // Insert new data rows
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $("#table_lokasi tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
+        });
+
+        // Reinitialize DataTable
+        $("#table_lokasi").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_lokasi.xlsx`;
+        $(`#lokasi-download-link`).attr("href", modelDownloadLink);
+
+      })
+      .catch((error) => {
+        console.error("Error reading file: ", error);
+        $("#last-update").html("File Not Found! <br>Please upload a new one.");
+      });
+  }
+
+  function loadViewStatus() {
+    fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_status`)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        var data = new Uint8Array(buffer);
+        var workbook = XLSX.read(data, { type: "array" });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        var headerRow = jsonData[0];
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#table_status')) {
+          $('#table_status').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
+        $("#table_status thead").empty().append(`
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
+        `);
+        $("#table_status tbody").empty(); // Clear body too
+
+        // Insert new data rows
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $("#table_status tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
+        });
+
+        // Reinitialize DataTable
+        $("#table_status").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_status.xlsx`;
+        $(`#status-download-link`).attr("href", modelDownloadLink);
+
+      })
+      .catch((error) => {
+        console.error("Error reading file: ", error);
+        $("#last-update").html("File Not Found! <br>Please upload a new one.");
+      });
+  }
+
+  function loadViewJenisKelamin() {
+    fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_jeniskelamin`)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        var data = new Uint8Array(buffer);
+        var workbook = XLSX.read(data, { type: "array" });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        var headerRow = jsonData[0];
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#table_jeniskelamin')) {
+          $('#table_jeniskelamin').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
+        $("#table_jeniskelamin thead").empty().append(`
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
+        `);
+        $("#table_jeniskelamin tbody").empty(); // Clear body too
+
+        // Insert new data rows
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $("#table_jeniskelamin tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
+        });
+
+        // Reinitialize DataTable
+        $("#table_jeniskelamin").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_jeniskelamin.xlsx`;
+        $(`#jeniskelamin-download-link`).attr("href", modelDownloadLink);
+
+      })
+      .catch((error) => {
+        console.error("Error reading file: ", error);
+        $("#last-update").html("File Not Found! <br>Please upload a new one.");
+      });
+  }
+
+  loadViewTingkat();
+  loadViewLokasi();
+  loadViewStatus();
+  loadViewJenisKelamin();
 
   function loadModelTable(tab) {
 

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesis - Zhulfi Bajra Wikjatmiko</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tesis - Zhulfi Bajra Wikjatmiko</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <style>
         #loading-overlay {
             position: fixed;
             top: 0;
@@ -20,175 +19,632 @@
             justify-content: center;
             z-index: 9999; /* Ensure it's on top */
         }
-    </style>
-</head>
-<body>
-    <div id="loading-overlay">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+        </style>
+    </head>
+    <body>
+        <div id="loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
-    </div>
-
-   <!-- Header -->
-    <header class="bg-success text-white text-center py-4">
-        <h2 class="mb-0">Clustering dan Visualisasi Data ASN dalam Penunjang Analisis Kecukupan Data</h2>
-        <h2 class="mb-0">di Perangkat Daerah Pemerintah Provinsi Jawa Timur</h2>
-    </header>
-
-
-    <div class="container my-5 text-center">
-
-        <!-- <button id="load-data-btn" class="btn btn-success btn-lg w-100 mb-4">Load Excel Data</button> -->
-        <p>Last Update: <span id="last-update">Loading...</span></p>
-        <button id="file-upload-btn" class="mb-4">Upload Data</button>
-
-        <input type="file" id="file-upload" accept=".xlsx,.xls,.csv" class="form-control mb-4" style="display: none;"/>
-       
-
-        
-        <img id="map" src="img/map.png" alt="Map Image" class="img-fluid rounded mb-4 shadow mx-auto " usemap="#city-map">
-
-        <map name="city-map">
-            <area target="" alt="Kab. Tuban" title="Kab. Tuban" href="" coords="318,51,388,108" shape="rect" data-city="Kabupaten Tuban">
-            <area target="" alt="Kab. Bojonegoro" title="Kab. Bojonegoro" href="" coords="276,149,360,198" shape="rect" data-city="Kabupaten Bojonegoro">
-            <area target="" alt="Kab. Ngawi" title="Kab. Ngawi" href="" coords="124,218,191,265" shape="rect" data-city="Kabupaten Ngawi">
-            <area target="" alt="Kab. Magetan" title="Kab. Magetan" href="" coords="132,300,194,335" shape="rect" data-city="Kabupaten Magetan">
-            <area target="" alt="Kab. Ponorogo" title="Kab. Ponorogo" href="" coords="176,380,248,423" shape="rect" data-city="Kabupaten Ponorogo">
-            <area target="" alt="Kab. Pacitan" title="Kab. Pacitan" href="" coords="80,459,155,494" shape="rect" data-city="Kabupaten Pacitan">
-            <area target="" alt="Kab. Trenggalek" title="Kab. Trenggalek" href="" coords="205,468,287,511" shape="rect" data-city="Kabupaten Trenggalek">
-            <area target="" alt="Kab. Tulungagung" title="Kab. Tulungagung" href="" coords="332,451,398,484" shape="rect" data-city="Kabupaten Tulungagung">
-            <area target="" alt="Kota Madiun" title="Kota Madiun" href="" coords="211,281,243,311" shape="rect" data-city="Kota Madiun">
-            <area target="" alt="Kab. Madiun" title="Kab. Madiun" href="" coords="248,304,285,338" shape="rect" data-city="Kabupaten Madiun">
-            <area target="" alt="Kab. Nganjuk" title="Kab. Nganjuk" href="" coords="346,255,398,287" shape="rect" data-city="Kabupaten Nganjuk">
-            <area target="" alt="Kota Kediri" title="Kota Kediri" href="" coords="367,359,414,389" shape="rect" data-city="Kota Kediri">
-            <area target="" alt="Kab. Kediri" title="Kab. Kediri" href="" coords="420,328,468,363" shape="rect" data-city="Kabupaten Kediri">
-            <area target="" alt="Kab. Lamongan" title="Kab. Lamongan" href="" coords="462,117,513,156" shape="rect" data-city="Kabupaten Lamongan">
-            <area target="" alt="Kab. Gresik" title="Kab. Gresik" href="" coords="543,148,579,179" shape="rect" data-city="Kabupaten Gresik">
-            <area target="" alt="Kab. Jombang" title="Kab. Jombang" href="" coords="444,247,488,284" shape="rect" data-city="Kabupaten Jombang">
-            <area target="" alt="Kota Blitar" title="Kota Blitar" href="" coords="416,437,465,465" shape="rect" data-city="Kota Blitar">
-            <area target="" alt="Kab. Blitar" title="Kab. Blitar" href="" coords="431,482,484,526" shape="rect" data-city="Kabupaten Blitar">
-            <area target="" alt="Kota Surabaya" title="Kota Surabaya" href="" coords="605,163,654,200" shape="rect" data-city="Kota Surabaya">
-            <area target="" alt="Kota Mojokerto" title="Kota Mojokerto" href="" coords="512,240,544,273" shape="rect" data-city="Kota Mojokerto">
-            <area target="" alt="Kab. Mojokerto" title="Kab. Mojokerto" href="" coords="531,283,574,328" shape="rect" data-city="Kabupaten Mojokerto">
-            <area target="" alt="Kab. Batu" title="Kab. Batu" href="" coords="510,363,547,398" shape="rect" data-city="Kabupaten Batu">
-            <area target="" alt="Kota Malang" title="Kota Malang" href="" coords="567,400,628,442" shape="rect" data-city="Kota Malang">
-            <area target="" alt="Kab. Malang" title="Kab. Malang" href="" coords="573,489,626,522" shape="rect" data-city="Kabupaten Malang">
-            <area target="" alt="Kota Pasuruan" title="Kota Pasuruan" href="" coords="659,296,711,337" shape="rect" data-city="Kota Pasuruan">
-            <area target="" alt="Kab. Pasuruan" title="Kab. Pasuruan" href="" coords="649,351,703,388" shape="rect" data-city="Kabupaten Pasuruan">
-            <area target="" alt="Kab. Sidoarjo" title="Kab. Sidoarjo" href="" coords="602,214,648,251" shape="rect" data-city="Kabupaten Sidoarjo">
-            <area target="" alt="Kota Probolinggo" title="Kota Probolinggo" href="" coords="755,333,813,377" shape="rect" data-city="Kota Probolinggo">
-            <area target="" alt="Kab. Probolinggo" title="Kab. Probolinggo" href="" coords="853,376,903,409" shape="rect" data-city="Kabupaten Probolinggo">
-            <area target="" alt="Kab. Lumajang" title="Kab. Lumajang" href="" coords="737,443,794,480" shape="rect" data-city="Kabupaten Lumajang">
-            <area target="" alt="Kab. Jember" title="Kab. Jember" href="" coords="967,521,911,486" shape="rect" data-city="Kabupaten Jember">
-            <area target="" alt="Kab. Bondowoso" title="Kab. Bondowoso" href="" coords="1009,364,1063,412" shape="rect" data-city="Kabupaten Bondowoso">
-            <area target="" alt="Kab. Situbondo" title="Kab. Situbondo" href="" coords="1104,326,1166,372" shape="rect" data-city="Kabupaten Situbondo">
-            <area target="" alt="Kab. Banyuwangi" title="Kab. Banyuwangi" href="" coords="1082,519,1151,571" shape="rect" data-city="Kabupaten Banyuwangi">
-            <area target="" alt="Kab. Bangkalan" title="Kab. Bangkalan" href="" coords="648,86,701,131" shape="rect" data-city="Kabupaten Bangkalan">
-            <area target="" alt="Kab. Sampang" title="Kab. Sampang" href="" coords="780,99,825,137" shape="rect" data-city="Kabupaten Sampang">
-            <area target="" alt="Kab. Pamekasan" title="Kab. Pamekasan" href="" coords="864,85,906,126" shape="rect" data-city="Kabupaten Pamekasan">
-            <area target="" alt="Kab. Sumenep" title="Kab. Sumenep" href="" coords="970,59,1030,101" shape="rect" data-city="Kabupaten Sumenep">
-        </map>        
-
-        <p id="selected-city" style="font-weight: bold; font-size: 18px;">Menampilkan Semua Kota</p>
-        <button id="reset-filter" style="display: none;">Tampilkan Semua Kota</button>
-        
-        <table class="dynamic-table table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th class="text-center">Column 1</th>
-                    <th class="text-center">Column 2</th>
-                    <th class="text-center">Column 3</th>
-                    <th class="text-center">Column 4</th>
-                    <th class="text-center">Column 5</th>
-                    <th class="text-center">Column 6</th>
-                    <th class="text-center">Column 7</th>
-                    <th class="text-center">Column 8</th>
-                    <th class="text-center">Column 9</th>
-                    <th class="text-center">Column 10</th>
-                    <th class="text-center">Column 11</th>
-                    <th class="text-center">Column 12</th>
-                    <th class="text-center">Column 13</th>
-                    <th class="text-center">Column 14</th>
-                    <th class="text-center">Column 15</th>
-                    <th class="text-center">Column 16</th>
-                    <th class="text-center">Column 17</th>
-                    <th class="text-center">Column 18</th>
-                    <th class="text-center">Column 19</th>
-                    <th class="text-center">Column 20</th>
-                    <th class="text-center">Column 21</th>
-                    <!-- <th class="text-center">Column 22</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <!-- dynamic table -->
-            </tbody>
-        </table>
-
-        <div class="container my-5">
-            <!-- Tab Interface -->
-            <ul class="nav nav-tabs nav-pills justify-content-center" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">K-Means</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Gaussian Mixture</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Hierarchical Clustering</button>
-                </li>
-            </ul>
-        
-            
-            <div class="tab-content mt-4" id="myTabContent">
-                <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-                    <button class="btn btn-primary load-result-btn" data-tab="tab1">Generate Data</button>
-                    <button id="kmeans-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab1" >Download KMeans PDF</button>
-                    <br> <br>
-                    <div id="images-tab1" class="text-center"></div> <!-- Tempat gambar -->
-                    <br> <br>
-                    <div id="output-tab1"></div> <!-- Tempat tabel -->
-                    <div class="row images-container1 justify-content-center" style="display: none;"></div>
-                </div>
-            
-                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-                    <button class="btn btn-primary load-result-btn" data-tab="tab2">Generate Data</button>
-                    <button id="gmm-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab2" >Download GMM PDF</button>
-                    <br> <br>
-                    <div id="images-tab2" class="text-center"></div>
-                    <br> <br>
-                    <div id="output-tab2"></div>
-                    <div class="row images-container2 justify-content-center" style="display: none;"></div>
-                </div>
-            
-                <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-                    <button class="btn btn-primary load-result-btn" data-tab="tab3">Generate Data</button>
-                    <button id="hierarchical-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab3" >Download Hierarchical PDF</button>
-                    <br> <br>
-                    <div id="images-tab3" class="text-center"></div>
-                    <br> <br>
-                    <div id="output-tab3"></div>
-                    <div class="row images-container3 justify-content-center" style="display: none;"></div>
+        <!-- Header -->
+        <header class="bg-success text-white text-center py-4">
+            <h2 class="mb-0">Clustering dan Visualisasi Data ASN dalam Penunjang Analisis Kecukupan Data</h2>
+            <h2 class="mb-0">di Perangkat Daerah Pemerintah Provinsi Jawa Timur</h2>
+        </header>
+        <div class="container my-5 text-center">
+            <!-- <button id="load-data-btn" class="btn btn-success btn-lg w-100 mb-4">Load Excel Data</button> -->
+            <p>Last Update:
+                <span id="last-update">Loading...</span>
+            </p>
+            <button id="file-upload-btn" class="mb-4">Upload Data</button>
+            <input
+                type="file"
+                id="file-upload"
+                accept=".xlsx,.xls,.csv"
+                class="form-control mb-4"
+                style="display: none;"
+            >
+            <img
+                id="map"
+                src="img/map.png"
+                alt="Map Image"
+                class="img-fluid rounded mb-4 shadow mx-auto "
+                usemap="#city-map"
+            >
+            <map name="city-map">
+                <area
+                    target=""
+                    alt="Kab. Tuban"
+                    title="Kab. Tuban"
+                    href=""
+                    coords="318,51,388,108"
+                    shape="rect"
+                    data-city="Kabupaten Tuban"
+                >
+                <area
+                    target=""
+                    alt="Kab. Bojonegoro"
+                    title="Kab. Bojonegoro"
+                    href=""
+                    coords="276,149,360,198"
+                    shape="rect"
+                    data-city="Kabupaten Bojonegoro"
+                >
+                <area
+                    target=""
+                    alt="Kab. Ngawi"
+                    title="Kab. Ngawi"
+                    href=""
+                    coords="124,218,191,265"
+                    shape="rect"
+                    data-city="Kabupaten Ngawi"
+                >
+                <area
+                    target=""
+                    alt="Kab. Magetan"
+                    title="Kab. Magetan"
+                    href=""
+                    coords="132,300,194,335"
+                    shape="rect"
+                    data-city="Kabupaten Magetan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Ponorogo"
+                    title="Kab. Ponorogo"
+                    href=""
+                    coords="176,380,248,423"
+                    shape="rect"
+                    data-city="Kabupaten Ponorogo"
+                >
+                <area
+                    target=""
+                    alt="Kab. Pacitan"
+                    title="Kab. Pacitan"
+                    href=""
+                    coords="80,459,155,494"
+                    shape="rect"
+                    data-city="Kabupaten Pacitan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Trenggalek"
+                    title="Kab. Trenggalek"
+                    href=""
+                    coords="205,468,287,511"
+                    shape="rect"
+                    data-city="Kabupaten Trenggalek"
+                >
+                <area
+                    target=""
+                    alt="Kab. Tulungagung"
+                    title="Kab. Tulungagung"
+                    href=""
+                    coords="332,451,398,484"
+                    shape="rect"
+                    data-city="Kabupaten Tulungagung"
+                >
+                <area
+                    target=""
+                    alt="Kota Madiun"
+                    title="Kota Madiun"
+                    href=""
+                    coords="211,281,243,311"
+                    shape="rect"
+                    data-city="Kota Madiun"
+                >
+                <area
+                    target=""
+                    alt="Kab. Madiun"
+                    title="Kab. Madiun"
+                    href=""
+                    coords="248,304,285,338"
+                    shape="rect"
+                    data-city="Kabupaten Madiun"
+                >
+                <area
+                    target=""
+                    alt="Kab. Nganjuk"
+                    title="Kab. Nganjuk"
+                    href=""
+                    coords="346,255,398,287"
+                    shape="rect"
+                    data-city="Kabupaten Nganjuk"
+                >
+                <area
+                    target=""
+                    alt="Kota Kediri"
+                    title="Kota Kediri"
+                    href=""
+                    coords="367,359,414,389"
+                    shape="rect"
+                    data-city="Kota Kediri"
+                >
+                <area
+                    target=""
+                    alt="Kab. Kediri"
+                    title="Kab. Kediri"
+                    href=""
+                    coords="420,328,468,363"
+                    shape="rect"
+                    data-city="Kabupaten Kediri"
+                >
+                <area
+                    target=""
+                    alt="Kab. Lamongan"
+                    title="Kab. Lamongan"
+                    href=""
+                    coords="462,117,513,156"
+                    shape="rect"
+                    data-city="Kabupaten Lamongan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Gresik"
+                    title="Kab. Gresik"
+                    href=""
+                    coords="543,148,579,179"
+                    shape="rect"
+                    data-city="Kabupaten Gresik"
+                >
+                <area
+                    target=""
+                    alt="Kab. Jombang"
+                    title="Kab. Jombang"
+                    href=""
+                    coords="444,247,488,284"
+                    shape="rect"
+                    data-city="Kabupaten Jombang"
+                >
+                <area
+                    target=""
+                    alt="Kota Blitar"
+                    title="Kota Blitar"
+                    href=""
+                    coords="416,437,465,465"
+                    shape="rect"
+                    data-city="Kota Blitar"
+                >
+                <area
+                    target=""
+                    alt="Kab. Blitar"
+                    title="Kab. Blitar"
+                    href=""
+                    coords="431,482,484,526"
+                    shape="rect"
+                    data-city="Kabupaten Blitar"
+                >
+                <area
+                    target=""
+                    alt="Kota Surabaya"
+                    title="Kota Surabaya"
+                    href=""
+                    coords="605,163,654,200"
+                    shape="rect"
+                    data-city="Kota Surabaya"
+                >
+                <area
+                    target=""
+                    alt="Kota Mojokerto"
+                    title="Kota Mojokerto"
+                    href=""
+                    coords="512,240,544,273"
+                    shape="rect"
+                    data-city="Kota Mojokerto"
+                >
+                <area
+                    target=""
+                    alt="Kab. Mojokerto"
+                    title="Kab. Mojokerto"
+                    href=""
+                    coords="531,283,574,328"
+                    shape="rect"
+                    data-city="Kabupaten Mojokerto"
+                >
+                <area
+                    target=""
+                    alt="Kab. Batu"
+                    title="Kab. Batu"
+                    href=""
+                    coords="510,363,547,398"
+                    shape="rect"
+                    data-city="Kabupaten Batu"
+                >
+                <area
+                    target=""
+                    alt="Kota Malang"
+                    title="Kota Malang"
+                    href=""
+                    coords="567,400,628,442"
+                    shape="rect"
+                    data-city="Kota Malang"
+                >
+                <area
+                    target=""
+                    alt="Kab. Malang"
+                    title="Kab. Malang"
+                    href=""
+                    coords="573,489,626,522"
+                    shape="rect"
+                    data-city="Kabupaten Malang"
+                >
+                <area
+                    target=""
+                    alt="Kota Pasuruan"
+                    title="Kota Pasuruan"
+                    href=""
+                    coords="659,296,711,337"
+                    shape="rect"
+                    data-city="Kota Pasuruan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Pasuruan"
+                    title="Kab. Pasuruan"
+                    href=""
+                    coords="649,351,703,388"
+                    shape="rect"
+                    data-city="Kabupaten Pasuruan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Sidoarjo"
+                    title="Kab. Sidoarjo"
+                    href=""
+                    coords="602,214,648,251"
+                    shape="rect"
+                    data-city="Kabupaten Sidoarjo"
+                >
+                <area
+                    target=""
+                    alt="Kota Probolinggo"
+                    title="Kota Probolinggo"
+                    href=""
+                    coords="755,333,813,377"
+                    shape="rect"
+                    data-city="Kota Probolinggo"
+                >
+                <area
+                    target=""
+                    alt="Kab. Probolinggo"
+                    title="Kab. Probolinggo"
+                    href=""
+                    coords="853,376,903,409"
+                    shape="rect"
+                    data-city="Kabupaten Probolinggo"
+                >
+                <area
+                    target=""
+                    alt="Kab. Lumajang"
+                    title="Kab. Lumajang"
+                    href=""
+                    coords="737,443,794,480"
+                    shape="rect"
+                    data-city="Kabupaten Lumajang"
+                >
+                <area
+                    target=""
+                    alt="Kab. Jember"
+                    title="Kab. Jember"
+                    href=""
+                    coords="967,521,911,486"
+                    shape="rect"
+                    data-city="Kabupaten Jember"
+                >
+                <area
+                    target=""
+                    alt="Kab. Bondowoso"
+                    title="Kab. Bondowoso"
+                    href=""
+                    coords="1009,364,1063,412"
+                    shape="rect"
+                    data-city="Kabupaten Bondowoso"
+                >
+                <area
+                    target=""
+                    alt="Kab. Situbondo"
+                    title="Kab. Situbondo"
+                    href=""
+                    coords="1104,326,1166,372"
+                    shape="rect"
+                    data-city="Kabupaten Situbondo"
+                >
+                <area
+                    target=""
+                    alt="Kab. Banyuwangi"
+                    title="Kab. Banyuwangi"
+                    href=""
+                    coords="1082,519,1151,571"
+                    shape="rect"
+                    data-city="Kabupaten Banyuwangi"
+                >
+                <area
+                    target=""
+                    alt="Kab. Bangkalan"
+                    title="Kab. Bangkalan"
+                    href=""
+                    coords="648,86,701,131"
+                    shape="rect"
+                    data-city="Kabupaten Bangkalan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Sampang"
+                    title="Kab. Sampang"
+                    href=""
+                    coords="780,99,825,137"
+                    shape="rect"
+                    data-city="Kabupaten Sampang"
+                >
+                <area
+                    target=""
+                    alt="Kab. Pamekasan"
+                    title="Kab. Pamekasan"
+                    href=""
+                    coords="864,85,906,126"
+                    shape="rect"
+                    data-city="Kabupaten Pamekasan"
+                >
+                <area
+                    target=""
+                    alt="Kab. Sumenep"
+                    title="Kab. Sumenep"
+                    href=""
+                    coords="970,59,1030,101"
+                    shape="rect"
+                    data-city="Kabupaten Sumenep"
+                >
+            </map>
+            <p id="selected-city" style="font-weight: bold; font-size: 18px;">Menampilkan Semua Kota</p>
+            <button id="reset-filter" style="display: none;">Tampilkan Semua Kota</button>
+            <br>
+            <a id="view-download-link" download>📥 Download Data</a>
+            <table id="table_view" class="dynamic-table table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center">Column 1</th>
+                        <th class="text-center">Column 2</th>
+                        <th class="text-center">Column 3</th>
+                        <th class="text-center">Column 4</th>
+                        <th class="text-center">Column 5</th>
+                        <th class="text-center">Column 6</th>
+                        <th class="text-center">Column 7</th>
+                        <th class="text-center">Column 8</th>
+                        <th class="text-center">Column 9</th>
+                        <th class="text-center">Column 10</th>
+                        <th class="text-center">Column 11</th>
+                        <th class="text-center">Column 12</th>
+                        <th class="text-center">Column 13</th>
+                        <th class="text-center">Column 14</th>
+                        <th class="text-center">Column 15</th>
+                        <th class="text-center">Column 16</th>
+                        <th class="text-center">Column 17</th>
+                        <th class="text-center">Column 18</th>
+                        <th class="text-center">Column 19</th>
+                        <th class="text-center">Column 20</th>
+                        <th class="text-center">Column 21</th>
+                        <th class="text-center">Column 22</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- dynamic table --></tbody>
+            </table>
+            <h2>Data Group By Tingkat</h2>
+            <a id="tingkat-download-link" download>📥 Download Data</a>
+            <table id="table_tingkat" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">Column 1</th>
+                        <th class="text-center">Column 2</th>
+                        <th class="text-center">Column 3</th>
+                        <th class="text-center">Column 4</th>
+                        <th class="text-center">Column 5</th>
+                        <th class="text-center">Column 6</th>
+                        <th class="text-center">Column 7</th>
+                        <th class="text-center">Column 8</th>
+                        <th class="text-center">Column 9</th>
+                        <th class="text-center">Column 10</th>
+                        <th class="text-center">Column 11</th>
+                        <th class="text-center">Column 12</th>
+                        <th class="text-center">Column 13</th>
+                        <th class="text-center">Column 14</th>
+                        <th class="text-center">Column 15</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- dynamic table --></tbody>
+            </table>
+            <br>
+            <br>
+            <h2>Data Group By Lokasi</h2>
+            <a id="lokasi-download-link" download>📥 Download Data</a>
+            <table id="table_lokasi" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">Column 1</th>
+                        <th class="text-center">Column 2</th>
+                        <th class="text-center">Column 3</th>
+                        <th class="text-center">Column 4</th>
+                        <th class="text-center">Column 5</th>
+                        <th class="text-center">Column 6</th>
+                        <th class="text-center">Column 7</th>
+                        <th class="text-center">Column 8</th>
+                        <th class="text-center">Column 9</th>
+                        <th class="text-center">Column 10</th>
+                        <th class="text-center">Column 11</th>
+                        <th class="text-center">Column 12</th>
+                        <th class="text-center">Column 13</th>
+                        <th class="text-center">Column 14</th>
+                        <th class="text-center">Column 15</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br>
+            <br>
+            <h2>Data Group By Status</h2>
+            <a id="status-download-link" download>📥 Download Data</a>
+            <table id="table_status" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">Column 1</th>
+                        <th class="text-center">Column 2</th>
+                        <th class="text-center">Column 3</th>
+                        <th class="text-center">Column 4</th>
+                        <th class="text-center">Column 5</th>
+                        <th class="text-center">Column 6</th>
+                        <th class="text-center">Column 7</th>
+                        <th class="text-center">Column 8</th>
+                        <th class="text-center">Column 9</th>
+                        <th class="text-center">Column 10</th>
+                        <th class="text-center">Column 11</th>
+                        <th class="text-center">Column 12</th>
+                        <th class="text-center">Column 13</th>
+                        <th class="text-center">Column 14</th>
+                        <th class="text-center">Column 15</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br>
+            <br>
+            <h2>Data Group By Jenis Kelamin</h2>
+            <a id="jeniskelamin-download-link" download>📥 Download Data</a>
+            <table id="table_jeniskelamin" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-center">Column 1</th>
+                        <th class="text-center">Column 2</th>
+                        <th class="text-center">Column 3</th>
+                        <th class="text-center">Column 4</th>
+                        <th class="text-center">Column 5</th>
+                        <th class="text-center">Column 6</th>
+                        <th class="text-center">Column 7</th>
+                        <th class="text-center">Column 8</th>
+                        <th class="text-center">Column 9</th>
+                        <th class="text-center">Column 10</th>
+                        <th class="text-center">Column 11</th>
+                        <th class="text-center">Column 12</th>
+                        <th class="text-center">Column 13</th>
+                        <th class="text-center">Column 14</th>
+                        <th class="text-center">Column 15</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br>
+            <br>
+            <div class="container my-5">
+                <!-- Tab Interface -->
+                <ul class="nav nav-tabs nav-pills justify-content-center" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link active"
+                            id="tab1-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab1"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab1"
+                            aria-selected="true"
+                        >K-Means</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="tab2-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab2"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab2"
+                            aria-selected="false"
+                        >Gaussian Mixture</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="tab3-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab3"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab3"
+                            aria-selected="false"
+                        >Hierarchical Clustering</button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-4" id="myTabContent">
+                    <div
+                        class="tab-pane fade show active"
+                        id="tab1"
+                        role="tabpanel"
+                        aria-labelledby="tab1-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab1">Generate Data</button>
+                        <button id="kmeans-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab1">Download KMeans PDF</button>
+                        <br>
+                        <br>
+                        <div id="images-tab1" class="text-center"></div>
+                        <!-- Tempat gambar -->
+                        <br>
+                        <br>
+                        <div id="output-tab1"></div>
+                        <!-- Tempat tabel -->
+                        <div class="row images-container1 justify-content-center" style="display: none;"></div>
+                    </div>
+                    <div
+                        class="tab-pane fade"
+                        id="tab2"
+                        role="tabpanel"
+                        aria-labelledby="tab2-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab2">Generate Data</button>
+                        <button id="gmm-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab2">Download GMM PDF</button>
+                        <br>
+                        <br>
+                        <div id="images-tab2" class="text-center"></div>
+                        <br>
+                        <br>
+                        <div id="output-tab2"></div>
+                        <div class="row images-container2 justify-content-center" style="display: none;"></div>
+                    </div>
+                    <div
+                        class="tab-pane fade"
+                        id="tab3"
+                        role="tabpanel"
+                        aria-labelledby="tab3-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab3">Generate Data</button>
+                        <button id="hierarchical-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab3">Download Hierarchical PDF</button>
+                        <br>
+                        <br>
+                        <div id="images-tab3" class="text-center"></div>
+                        <br>
+                        <br>
+                        <div id="output-tab3"></div>
+                        <div class="row images-container3 justify-content-center" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
-            
         </div>
-        
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p><strong>Nama:</strong> Zhulfi Bajra Wikjatmiko | <strong>NRP:</strong> 222210681</p>
-        <p><strong>Pembimbing:</strong> Endang Setyati, Hj., Dr., Ir., M.T. | <strong>Co-Pembimbing:</strong> Yosi Kristian, Dr., S.Kom., M.Kom.</p>
-        <p>Institut Sains dan Teknologi Terpadu Surabaya (ISTTS)</p>
-    </footer>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-    <script src="js/script.js"> </script>
-
-    
-</body>
+        <!-- Footer -->
+        <footer class="bg-dark text-white text-center py-3 mt-5">
+            <p>
+                <strong>Nama:</strong> Zhulfi Bajra Wikjatmiko |
+                <strong>NRP:</strong> 222210681
+            </p>
+            <p>
+                <strong>Pembimbing:</strong> Endang Setyati, Hj., Dr., Ir., M.T. |
+                <strong>Co-Pembimbing:</strong> Yosi Kristian, Dr., S.Kom., M.Kom.
+            </p>
+            <p>Institut Sains dan Teknologi Terpadu Surabaya (ISTTS)</p>
+        </footer>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+        <script src="js/script.js"></script>
+    </body>
 </html>
