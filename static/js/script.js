@@ -123,7 +123,7 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        if (data) {
+        if (headerRow[0] != "File not found.") {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view.xlsx`;
           $(`#view-download-link`).attr("href", modelDownloadLink);
         }
@@ -172,7 +172,8 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        if (data) {
+
+        if (headerRow[0] != "File not found.") {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_tingkat.xlsx`;
           $(`#tingkat-download-link`).attr("href", modelDownloadLink);
         }
@@ -218,7 +219,7 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        if (data) {
+        if (headerRow[0] != "File not found.") {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_lokasi.xlsx`;
           $(`#lokasi-download-link`).attr("href", modelDownloadLink);
         }
@@ -264,7 +265,7 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        if (data) {
+        if (headerRow[0] != "File not found.") {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_status.xlsx`;
           $(`#status-download-link`).attr("href", modelDownloadLink);
         }
@@ -310,7 +311,7 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        if (data) {
+        if (headerRow[0] != "File not found.") {
           let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_jeniskelamin.xlsx`;
           $(`#jeniskelamin-download-link`).attr("href", modelDownloadLink);
         }
