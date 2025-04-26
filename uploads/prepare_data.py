@@ -79,6 +79,9 @@ grouped_df_unitkerja = df_unitkerja.groupby(group_cols)[doc_columns].sum().reset
 # Optional: Add total document count
 grouped_df_unitkerja['TOTAL DOKUMEN'] = grouped_df_unitkerja[doc_columns].sum(axis=1)
 
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_unitkerja.insert(0, 'NO', range(1, len(grouped_df_unitkerja) + 1))
+
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view.xlsx")
 grouped_df_unitkerja.to_excel(output_file_path, index=False)
@@ -99,6 +102,9 @@ grouped_df_tingkat = df_tingkat.groupby(group_cols)[doc_columns].sum().reset_ind
 
 # Optional: Add total document count
 grouped_df_tingkat['TOTAL DOKUMEN'] = grouped_df_tingkat[doc_columns].sum(axis=1)
+
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_tingkat.insert(0, 'NO', range(1, len(grouped_df_tingkat) + 1))
 
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view_tingkat.xlsx")
@@ -121,6 +127,9 @@ grouped_df_lokasi = df_lokasi.groupby(group_cols)[doc_columns].sum().reset_index
 # Optional: Add total document count
 grouped_df_lokasi['TOTAL DOKUMEN'] = grouped_df_lokasi[doc_columns].sum(axis=1)
 
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_lokasi.insert(0, 'NO', range(1, len(grouped_df_lokasi) + 1))
+
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view_lokasi.xlsx")
 grouped_df_lokasi.to_excel(output_file_path, index=False)
@@ -142,6 +151,9 @@ grouped_df_status = df_status.groupby(group_cols)[doc_columns].sum().reset_index
 # Optional: Add total document count
 grouped_df_status['TOTAL DOKUMEN'] = grouped_df_status[doc_columns].sum(axis=1)
 
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_status.insert(0, 'NO', range(1, len(grouped_df_status) + 1))
+
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view_status.xlsx")
 grouped_df_status.to_excel(output_file_path, index=False)
@@ -162,6 +174,9 @@ grouped_df_jeniskelamin = df_jeniskelamin.groupby(group_cols)[doc_columns].sum()
 
 # Optional: Add total document count
 grouped_df_jeniskelamin['TOTAL DOKUMEN'] = grouped_df_jeniskelamin[doc_columns].sum(axis=1)
+
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_jeniskelamin.insert(0, 'NO', range(1, len(grouped_df_jeniskelamin) + 1))
 
 # Save to Excel
 output_file_path = os.path.join(script_dir, "data_view_jeniskelamin.xlsx")
