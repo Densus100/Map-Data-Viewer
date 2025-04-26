@@ -123,8 +123,10 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view.xlsx`;
-        $(`#view-download-link`).attr("href", modelDownloadLink);
+        if (data) {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view.xlsx`;
+          $(`#view-download-link`).attr("href", modelDownloadLink);
+        }
 
       })
       .catch((error) => {
@@ -170,13 +172,14 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_tingkat.xlsx`;
-        $(`#tingkat-download-link`).attr("href", modelDownloadLink);
+        if (data) {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_tingkat.xlsx`;
+          $(`#tingkat-download-link`).attr("href", modelDownloadLink);
+        }
 
       })
       .catch((error) => {
         console.error("Error reading file: ", error);
-        $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
 
@@ -215,13 +218,14 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_lokasi.xlsx`;
-        $(`#lokasi-download-link`).attr("href", modelDownloadLink);
+        if (data) {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_lokasi.xlsx`;
+          $(`#lokasi-download-link`).attr("href", modelDownloadLink);
+        }
 
       })
       .catch((error) => {
         console.error("Error reading file: ", error);
-        $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
 
@@ -260,13 +264,14 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_status.xlsx`;
-        $(`#status-download-link`).attr("href", modelDownloadLink);
+        if (data) {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_status.xlsx`;
+          $(`#status-download-link`).attr("href", modelDownloadLink);
+        }
 
       })
       .catch((error) => {
         console.error("Error reading file: ", error);
-        $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
 
@@ -305,13 +310,14 @@ $(document).ready(function () {
           autoWidth: false,  // Optional: prevent automatic width calc
         });
 
-        let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_jeniskelamin.xlsx`;
-        $(`#jeniskelamin-download-link`).attr("href", modelDownloadLink);
+        if (data) {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_jeniskelamin.xlsx`;
+          $(`#jeniskelamin-download-link`).attr("href", modelDownloadLink);
+        }
 
       })
       .catch((error) => {
         console.error("Error reading file: ", error);
-        $("#last-update").html("File Not Found! <br>Please upload a new one.");
       });
   }
 
