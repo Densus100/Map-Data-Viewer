@@ -199,7 +199,7 @@ $(document).ready(function () {
     const city = $(this).data("city");
     $("#selected-city").text("Filter Kota: " + city);
 
-    table.column(4).search(city).draw();
+    table.column(3).search(city).draw();
     if (city) {
       $("#reset-filter").show();
     }
@@ -207,14 +207,14 @@ $(document).ready(function () {
 
   $("#reset-filter").on("click", function () {
     $("#selected-city").text("Menampilkan Semua Kota");
-    table.column(4).search("").draw(); // Menghapus filter
+    table.column(3).search("").draw(); // Menghapus filter
 
     // ✅ Perbaikan: gunakan `$(this)`, bukan `$$(this)`
     // $(this).hide();
   });
 
   table.on("draw", function () {
-    let filterApplied = table.column(4).search() !== "";
+    let filterApplied = table.column(3).search() !== "";
     $("#reset-filter").toggle(filterApplied);
   });
 
@@ -426,9 +426,9 @@ $(document).ready(function () {
         alert("There was an error generating the PDF.");
 
         // Reset the content of #myTabContent in case of error
-        tabContentContainer.html(
-          "<p class='text-danger'>There was an error generating the PDF.</p>"
-        );
+        // tabContentContainer.html(
+        //   "<p class='text-danger'>There was an error generating the PDF.</p>"
+        // );
       });
   });
 
