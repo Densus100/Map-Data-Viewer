@@ -68,23 +68,101 @@ doc_columns = [
 # Full list of columns to group by (first priority is UNIT KERJA)
 group_cols = ['UNIT KERJA', 'TINGKAT', 'LOKASI', 'PROVINSI', 'STATUS', 'JENIS KELAMIN', 'BULAN', 'TAHUN']
 
+df_unitkerja = df_filtered.copy()
+
 # Make sure document columns are numeric
-df_filtered.loc[:, doc_columns] = df_filtered[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+df_unitkerja.loc[:, doc_columns] = df_unitkerja[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
 
 # Group by all relevant columns
-grouped_df = df_filtered.groupby(group_cols)[doc_columns].sum().reset_index()
+grouped_df_unitkerja = df_unitkerja.groupby(group_cols)[doc_columns].sum().reset_index()
 
 # Optional: Add total document count
-# grouped_df['TOTAL DOKUMEN'] = grouped_df[doc_columns].sum(axis=1)
+grouped_df_unitkerja['TOTAL DOKUMEN'] = grouped_df_unitkerja[doc_columns].sum(axis=1)
 
-# Move 'BULAN' and 'TAHUN' to the end
-cols = [col for col in grouped_df.columns if col not in ['BULAN', 'TAHUN']] + ['BULAN', 'TAHUN']
-grouped_df = grouped_df[cols]
-
-# Add new index starting from 1 and name it 'NO'
-grouped_df.index += 1
-grouped_df.index.name = 'NO'
-
-# Save to Excel, now it will include the 'NO' index
+# Save to Excel
 output_file_path = os.path.join(script_dir, "data_view.xlsx")
-grouped_df.to_excel(output_file_path, index=True)
+grouped_df_unitkerja.to_excel(output_file_path, index=False)
+
+
+# ============================================================
+
+# Groupby Tingkat
+group_cols = ['TINGKAT']
+
+df_tingkat = df_filtered.copy()
+
+# Make sure document columns are numeric
+df_tingkat.loc[:, doc_columns] = df_tingkat[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
+# Group by all relevant columns
+grouped_df_tingkat = df_tingkat.groupby(group_cols)[doc_columns].sum().reset_index()
+
+# Optional: Add total document count
+grouped_df_tingkat['TOTAL DOKUMEN'] = grouped_df_tingkat[doc_columns].sum(axis=1)
+
+# Save to Excel
+output_file_path = os.path.join(script_dir, "data_view_tingkat.xlsx")
+grouped_df_tingkat.to_excel(output_file_path, index=False)
+
+
+# ============================================================
+
+# Groupby Lokasi
+group_cols = ['LOKASI']
+
+df_lokasi = df_filtered.copy()
+
+# Make sure document columns are numeric
+df_lokasi.loc[:, doc_columns] = df_lokasi[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
+# Group by all relevant columns
+grouped_df_lokasi = df_lokasi.groupby(group_cols)[doc_columns].sum().reset_index()
+
+# Optional: Add total document count
+grouped_df_lokasi['TOTAL DOKUMEN'] = grouped_df_lokasi[doc_columns].sum(axis=1)
+
+# Save to Excel
+output_file_path = os.path.join(script_dir, "data_view_lokasi.xlsx")
+grouped_df_lokasi.to_excel(output_file_path, index=False)
+
+
+# ============================================================
+
+# Groupby STATUS
+group_cols = ['STATUS']
+
+df_status = df_filtered.copy()
+
+# Make sure document columns are numeric
+df_status.loc[:, doc_columns] = df_status[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
+# Group by all relevant columns
+grouped_df_status = df_status.groupby(group_cols)[doc_columns].sum().reset_index()
+
+# Optional: Add total document count
+grouped_df_status['TOTAL DOKUMEN'] = grouped_df_status[doc_columns].sum(axis=1)
+
+# Save to Excel
+output_file_path = os.path.join(script_dir, "data_view_status.xlsx")
+grouped_df_status.to_excel(output_file_path, index=False)
+
+
+# ============================================================
+
+# Groupby JENIS KELAMIN
+group_cols = ['JENIS KELAMIN']
+
+df_jeniskelamin = df_filtered.copy()
+
+# Make sure document columns are numeric
+df_jeniskelamin.loc[:, doc_columns] = df_jeniskelamin[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
+# Group by all relevant columns
+grouped_df_jeniskelamin = df_jeniskelamin.groupby(group_cols)[doc_columns].sum().reset_index()
+
+# Optional: Add total document count
+grouped_df_jeniskelamin['TOTAL DOKUMEN'] = grouped_df_jeniskelamin[doc_columns].sum(axis=1)
+
+# Save to Excel
+output_file_path = os.path.join(script_dir, "data_view_jeniskelamin.xlsx")
+grouped_df_jeniskelamin.to_excel(output_file_path, index=False)
