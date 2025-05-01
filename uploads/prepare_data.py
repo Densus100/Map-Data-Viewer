@@ -35,23 +35,24 @@ df = df.drop(columns=['NAMA', 'NIP'], errors='ignore')
 
 # ================================================================
 
-# Calculate counts for each UNIT KERJA
-unit_kerja_counts = df['UNIT KERJA'].value_counts()
+# # Calculate counts for each UNIT KERJA
+# unit_kerja_counts = df['UNIT KERJA'].value_counts()
 
-# Determine the threshold using the formula (mean - standard deviation)
-threshold = unit_kerja_counts.mean() - unit_kerja_counts.std()
+# # Determine the threshold using the formula (mean - standard deviation)
+# threshold = unit_kerja_counts.mean() - unit_kerja_counts.std()
 
-proportion = 0.005  # For example, 0.5% of the total rows
-total_rows = df.shape[0]
-threshold = total_rows * proportion
+# proportion = 0.005  # For example, 0.5% of the total rows
+# total_rows = df.shape[0]
+# threshold = total_rows * proportion
 
-# Step 2: Filter out UNIT KERJA with counts below the threshold
-unit_kerja_counts = df['UNIT KERJA'].value_counts()
-filtered_units = unit_kerja_counts[unit_kerja_counts >= threshold].index
+# # Step 2: Filter out UNIT KERJA with counts below the threshold
+# unit_kerja_counts = df['UNIT KERJA'].value_counts()
+# filtered_units = unit_kerja_counts[unit_kerja_counts >= threshold].index
 
-# Step 3: Keep only rows with UNIT KERJA above the threshold
-df_filtered = df[df['UNIT KERJA'].isin(filtered_units)]
+# # Step 3: Keep only rows with UNIT KERJA above the threshold
+# df_filtered = df[df['UNIT KERJA'].isin(filtered_units)]
 
+df_filtered = df.copy()
 # Step 4: Save the filtered DataFrame to a new Excel file
 output_file_path = os.path.join(script_dir,"data_ready.xlsx")
 df_filtered.to_excel(output_file_path, index=False)
