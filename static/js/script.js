@@ -12,6 +12,10 @@ $(document).ready(function () {
     scrollX: true, // Mengaktifkan scroll horizontal
     autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
   });
+  $("#table_provinsi").DataTable({
+    scrollX: true, // Mengaktifkan scroll horizontal
+    autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
+  });
   $("#table_status").DataTable({
     scrollX: true, // Mengaktifkan scroll horizontal
     autoWidth: false, // Mencegah lebar kolom menjadi tidak proporsional
@@ -229,6 +233,51 @@ $(document).ready(function () {
         console.error("Error reading file: ", error);
       });
   }
+  function loadViewProvinsi() {
+    fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_provinsi`)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        var data = new Uint8Array(buffer);
+        var workbook = XLSX.read(data, { type: "array" });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        var headerRow = jsonData[0];
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#table_provinsi')) {
+          $('#table_provinsi').DataTable().destroy();
+        }
+
+        // Clear and rebuild table head and body
+        $("#table_provinsi thead").empty().append(`
+          <tr>${headerRow.map((col) => `<th class="text-center">${col}</th>`).join("")}</tr>
+        `);
+        $("#table_provinsi tbody").empty(); // Clear body too
+
+        // Insert new data rows
+        jsonData.slice(1).forEach((row) => {
+          var rowData = headerRow.map((_, i) => row[i] !== undefined ? row[i] : "");
+          $("#table_provinsi tbody").append(`
+            <tr>${rowData.map((cell) => `<td class="text-center">${cell}</td>`).join("")}</tr>
+          `);
+        });
+
+        // Reinitialize DataTable
+        $("#table_provinsi").DataTable({
+          scrollX: true, // Optional: make table responsive
+          autoWidth: false,  // Optional: prevent automatic width calc
+        });
+
+        if (headerRow[0] != "File not found.") {
+          let modelDownloadLink = `http://${serverIP}:3000/uploads/data_view_provinsi.xlsx`;
+          $(`#provinsi-download-link`).attr("href", modelDownloadLink);
+        }
+
+      })
+      .catch((error) => {
+        console.error("Error reading file: ", error);
+      });
+  }
 
   function loadViewStatus() {
     fetch(`http://${serverIP}:3000/uploads/excel-file/data_view_status`)
@@ -324,6 +373,7 @@ $(document).ready(function () {
 
   loadViewTingkat();
   loadViewLokasi();
+  loadViewProvinsi();
   loadViewStatus();
   loadViewJenisKelamin();
 

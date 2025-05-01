@@ -138,6 +138,30 @@ grouped_df_lokasi.to_excel(output_file_path, index=False)
 
 # ============================================================
 
+# Groupby Provinsi
+group_cols = ['PROVINSI']
+
+df_provinsi = df_filtered.copy()
+
+# Make sure document columns are numeric
+df_provinsi.loc[:, doc_columns] = df_provinsi[doc_columns].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+
+# Group by all relevant columns
+grouped_df_provinsi = df_provinsi.groupby(group_cols)[doc_columns].sum().reset_index()
+
+# Optional: Add total document count
+grouped_df_provinsi['TOTAL DOKUMEN'] = grouped_df_provinsi[doc_columns].sum(axis=1)
+
+# add a new column 'NO' with sequential numbers starting from 1
+grouped_df_provinsi.insert(0, 'NO', range(1, len(grouped_df_provinsi) + 1))
+
+# Save to Excel
+output_file_path = os.path.join(script_dir, "data_view_provinsi.xlsx")
+grouped_df_provinsi.to_excel(output_file_path, index=False)
+
+
+# ============================================================
+
 # Groupby STATUS
 group_cols = ['STATUS']
 

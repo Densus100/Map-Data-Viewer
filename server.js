@@ -73,6 +73,17 @@ app.get("/uploads/excel-file/data_view_lokasi", (req, res) => {
   res.sendFile(filePath);
 });
 
+// Endpoint untuk mendapatkan file hasil pemrosesan (data_view_provinsi.xlsx)
+app.get("/uploads/excel-file/data_view_provinsi", (req, res) => {
+  const filePath = path.join(__dirname, "uploads", "data_view_provinsi.xlsx");
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send("File not found.");
+  }
+
+  res.sendFile(filePath);
+});
+
 // Endpoint untuk mendapatkan file hasil pemrosesan (data_view_jeniskelamin.xlsx)
 app.get("/uploads/excel-file/data_view_jeniskelamin", (req, res) => {
   const filePath = path.join(__dirname, "uploads", "data_view_jeniskelamin.xlsx");
