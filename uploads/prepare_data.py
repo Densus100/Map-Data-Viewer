@@ -26,8 +26,8 @@ df.columns = df.columns.str.upper()
 # Verify the column names after stripping spaces
 # print(df.columns)
 
-# Remove rows where 'LOKASI' is 'Jakarta Pusat'
-df = df[df['LOKASI'] != 'Jakarta Pusat']
+# # Remove rows where 'LOKASI' is 'Jakarta Pusat'
+# df = df[df['LOKASI'] != 'Jakarta Pusat']
 
 df = df.drop(columns=['NAMA', 'NIP'], errors='ignore')
 
