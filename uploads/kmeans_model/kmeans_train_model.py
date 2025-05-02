@@ -452,6 +452,43 @@ kmeans_html_content += df_to_datatable_html(cluster_count_per_lokasi_sorted, "K-
 # ===================================================
 
 
+# Group by 'PROVINSI' and get the counts of each cluster label
+cluster_count_per_provinsi = df_kmeans.groupby('PROVINSI')['Cluster_Label'].value_counts().unstack(fill_value=0)
+
+# Reorder the columns to match 'High', 'Medium', 'Low'
+cluster_count_per_provinsi = cluster_count_per_provinsi[['High', 'Medium', 'Low']]
+
+# Display the result
+# print(cluster_count_per_provinsi)
+
+# Assign weights to each cluster
+weights = {'High': 3, 'Medium': 2, 'Low': 1}
+
+# Calculate weighted score for each data
+cluster_count_per_provinsi['Total_Score'] = (
+    cluster_count_per_provinsi['High'] * weights['High'] +
+    cluster_count_per_provinsi['Medium'] * weights['Medium'] +
+    cluster_count_per_provinsi['Low'] * weights['Low']
+)
+
+# Sort by Total_Score in descending order to rank the units
+cluster_count_per_provinsi_sorted = cluster_count_per_provinsi.sort_values(by='Total_Score', ascending=False)
+
+# Display the results
+# cluster_count_per_provinsi_sorted
+# print("cluster_count_per_provinsi_sorted")
+# print(cluster_count_per_provinsi_sorted)
+
+cluster_count_per_provinsi_sorted_report = os.path.join(script_dir, "kmeans_best_provinsi_report.csv")
+cluster_count_per_provinsi_sorted.to_csv(cluster_count_per_provinsi_sorted_report, index=True)
+# kmeans_html_content += f"<h2>K-Means Group By PROVINSI</h2>\n{cluster_count_per_provinsi_sorted.to_html(index=True)}<br/><br/>\n"
+kmeans_html_content += df_to_datatable_html(cluster_count_per_provinsi_sorted, "K-Means Group By PROVINSI", "kmeans_best_provinsi_report", True)
+
+
+
+# ===================================================
+
+
 # Group by 'STATUS' and get the counts of each cluster label
 cluster_count_per_status = df_kmeans.groupby('STATUS')['Cluster_Label'].value_counts().unstack(fill_value=0)
 

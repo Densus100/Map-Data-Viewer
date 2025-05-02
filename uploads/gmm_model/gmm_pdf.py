@@ -108,6 +108,7 @@ add_table(pdf, "GMM Classification Report", os.path.join(script_dir, "gmm_classi
 add_table(pdf, "GMM Group By UNIT KERJA", os.path.join(script_dir, "gmm_best_unit_kerja_report.csv"), first_col_wider=True)
 add_table(pdf, "GMM Group By TINGKAT", os.path.join(script_dir, "gmm_best_tingkat_report.csv"))
 add_table(pdf, "GMM Group By LOKASI", os.path.join(script_dir, "gmm_best_lokasi_report.csv"))
+add_table(pdf, "GMM Group By PROVINSI", os.path.join(script_dir, "gmm_best_provinsi_report.csv"))
 add_table(pdf, "GMM Group By STATUS", os.path.join(script_dir, "gmm_best_status_report.csv"))
 add_table(pdf, "GMM Group By JENIS KELAMIN", os.path.join(script_dir, "gmm_best_jenis_kelamin_report.csv"))
 

@@ -108,6 +108,7 @@ add_table(pdf, "K-Means Classification Report", os.path.join(script_dir, "kmeans
 add_table(pdf, "K-Means Group By UNIT KERJA", os.path.join(script_dir, "kmeans_best_unit_kerja_report.csv"), first_col_wider=True)
 add_table(pdf, "K-Means Group By TINGKAT", os.path.join(script_dir, "kmeans_best_tingkat_report.csv"))
 add_table(pdf, "K-Means Group By LOKASI", os.path.join(script_dir, "kmeans_best_lokasi_report.csv"))
+add_table(pdf, "K-Means Group By PROVINSI", os.path.join(script_dir, "kmeans_best_provinsi_report.csv"))
 add_table(pdf, "K-Means Group By STATUS", os.path.join(script_dir, "kmeans_best_status_report.csv"))
 add_table(pdf, "K-Means Group By JENIS KELAMIN", os.path.join(script_dir, "kmeans_best_jenis_kelamin_report.csv"))
 
