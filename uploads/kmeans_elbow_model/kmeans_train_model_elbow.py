@@ -22,11 +22,11 @@ from sklearn.preprocessing import StandardScaler
 from matplotlib.colors import ListedColormap
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 from sklearn.cluster import KMeans  # K-Means clustering algorithm
-from sklearn.metrics import (
-    confusion_matrix,
-    classification_report,
-    ConfusionMatrixDisplay
-)
+# from sklearn.metrics import (
+#     confusion_matrix,
+#     classification_report,
+#     ConfusionMatrixDisplay
+# )
 
 # kmeans_html_content = """
 # <!DOCTYPE html>
@@ -250,71 +250,71 @@ print(f"All DataFrames saved as HTML in: {html_log_file}")
 # (OPTIONAL) CLASSIFY DOCUMENT COMPLETENESS (GROUND TRUTH) FOR EVALUATION
 # ==============================
 
-# Define thresholds for classifying document completeness
-medium_threshold = 40
-high_threshold = 80
+# # Define thresholds for classifying document completeness
+# medium_threshold = 40
+# high_threshold = 80
 
-def classify_completeness(percentage):
-    if percentage > high_threshold:
-        return 'High'
-    elif percentage > medium_threshold:
-        return 'Medium'
-    else:
-        return 'Low'
+# def classify_completeness(percentage):
+#     if percentage > high_threshold:
+#         return 'High'
+#     elif percentage > medium_threshold:
+#         return 'Medium'
+#     else:
+#         return 'Low'
 
-df_kmeans['Actual_Label'] = df_kmeans['Completeness_Percentage'].apply(classify_completeness)
+# df_kmeans['Actual_Label'] = df_kmeans['Completeness_Percentage'].apply(classify_completeness)
 
-# Map each cluster to the most common Actual_Label in that cluster
-cluster_to_actual = (
-    df_kmeans.groupby('Cluster_Label')['Actual_Label']
-    .agg(lambda x: x.value_counts().index[0])
-    .to_dict()
-)
-df_kmeans['Predicted_Label'] = df_kmeans['Cluster_Label'].map(cluster_to_actual)
+# # Map each cluster to the most common Actual_Label in that cluster
+# cluster_to_actual = (
+#     df_kmeans.groupby('Cluster_Label')['Actual_Label']
+#     .agg(lambda x: x.value_counts().index[0])
+#     .to_dict()
+# )
+# df_kmeans['Predicted_Label'] = df_kmeans['Cluster_Label'].map(cluster_to_actual)
 
-labels = cluster_labels  # ['Cluster 1', 'Cluster 2', ..., 'Cluster N']
+# labels = cluster_labels  # ['Cluster 1', 'Cluster 2', ..., 'Cluster N']
 
-# Compute confusion matrix to evaluate clustering performance
-conf_matrix = confusion_matrix(
-    df_kmeans['Cluster_Label'],
-    df_kmeans['Predicted_Label'],
-    labels=labels
-)
+# # Compute confusion matrix to evaluate clustering performance
+# conf_matrix = confusion_matrix(
+#     df_kmeans['Cluster_Label'],
+#     df_kmeans['Predicted_Label'],
+#     labels=labels
+# )
 
-# Convert confusion matrix to a DataFrame for easier readability
-conf_matrix_df = pd.DataFrame(
-    conf_matrix,
-    index=[f'Actual_{label}' for label in labels],
-    columns=[f'Pred_{label}' for label in labels]
-)
+# # Convert confusion matrix to a DataFrame for easier readability
+# conf_matrix_df = pd.DataFrame(
+#     conf_matrix,
+#     index=[f'Actual_{label}' for label in labels],
+#     columns=[f'Pred_{label}' for label in labels]
+# )
 
-# Save confusion matrix as a CSV file
-conf_matrix_report = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.csv")
-conf_matrix_df.to_csv(conf_matrix_report, index=True)
+# # Save confusion matrix as a CSV file
+# conf_matrix_report = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.csv")
+# conf_matrix_df.to_csv(conf_matrix_report, index=True)
 
-# Generate and save confusion matrix plot
-disp = ConfusionMatrixDisplay(
-    confusion_matrix=conf_matrix,
-    display_labels=labels
-)
-disp.plot(cmap="Blues", values_format='d')
-plt.title("Confusion Matrix")
-matrix_output = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.png")
-plt.savefig(matrix_output, dpi=300, bbox_inches='tight')
-plt.close()
+# # Generate and save confusion matrix plot
+# disp = ConfusionMatrixDisplay(
+#     confusion_matrix=conf_matrix,
+#     display_labels=labels
+# )
+# disp.plot(cmap="Blues", values_format='d')
+# plt.title("Confusion Matrix")
+# matrix_output = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.png")
+# plt.savefig(matrix_output, dpi=300, bbox_inches='tight')
+# plt.close()
 
-# Compute classification report (Precision, Recall, F1-Score)
-report = classification_report(
-    df_kmeans['Cluster_Label'],
-    df_kmeans['Predicted_Label'],
-    labels=labels,
-    target_names=labels,
-    output_dict=True,
-    zero_division=0  # <--- add this parameter
-)
+# # Compute classification report (Precision, Recall, F1-Score)
+# report = classification_report(
+#     df_kmeans['Cluster_Label'],
+#     df_kmeans['Predicted_Label'],
+#     labels=labels,
+#     target_names=labels,
+#     output_dict=True,
+#     zero_division=0  # <--- add this parameter
+# )
 
-# Convert classification report to DataFrame and save as CSV
-report_df = pd.DataFrame(report).transpose()
-output_report = os.path.join(script_dir, "kmeans_elbow_classification_report.csv")
-report_df.to_csv(output_report, index=True)
-kmeans_html_content += df_to_datatable_html(report_df, "K-Means Elbow Classification Report", "kmeans_elbow_classification_report", True)
+# # Convert classification report to DataFrame and save as CSV
+# report_df = pd.DataFrame(report).transpose()
+# output_report = os.path.join(script_dir, "kmeans_elbow_classification_report.csv")
+# report_df.to_csv(output_report, index=True)
+# kmeans_html_content += df_to_datatable_html(report_df, "K-Means Elbow Classification Report", "kmeans_elbow_classification_report", True)
