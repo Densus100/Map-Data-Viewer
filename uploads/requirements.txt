@@ -3,3 +3,5 @@ openpyxl
 scikit-learn
 matplotlib
 fpdf2
+kneed
+yellowbrick
