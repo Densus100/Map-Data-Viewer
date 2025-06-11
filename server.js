@@ -281,6 +281,7 @@ app.get("/check-existing-images/:tab", (req, res) => {
       images: [
         "kmeans_elbow_model/kmeans_elbow_clusters.png",
         "kmeans_elbow_model/kmeans_elbow_pca.png",
+        "kmeans_elbow_model/kmeans_yellowbrick_elbow.png",
       ],
     },
   };
