@@ -603,6 +603,19 @@
                             aria-selected="false"
                         >Hierarchical Clustering</button>
                     </li>
+                    <!-- KMeans Elbow Tab -->
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="tab4-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab4"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab4"
+                            aria-selected="false"
+                        >KMeans Elbow</button>
+                    </li>
                 </ul>
                 <div class="tab-content mt-4" id="myTabContent">
                     <div
@@ -654,6 +667,23 @@
                         <br>
                         <div id="output-tab3"></div>
                         <div class="row images-container3 justify-content-center" style="display: none;"></div>
+                    </div>
+                    <!-- KMeans Elbow Tab Content -->
+                    <div
+                        class="tab-pane fade"
+                        id="tab4"
+                        role="tabpanel"
+                        aria-labelledby="tab4-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab4">Generate Data</button>
+                        <button id="kmeans-elbow-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab4">Download KMeans Elbow PDF</button>
+                        <br>
+                        <br>
+                        <div id="images-tab4" class="text-center"></div>
+                        <br>
+                        <br>
+                        <div id="output-tab4"></div>
+                        <div class="row images-container4 justify-content-center" style="display: none;"></div>
                     </div>
                 </div>
             </div>

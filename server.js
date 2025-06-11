@@ -196,6 +196,15 @@ app.get("/load-content/:tab", (req, res) => {
         "hierarchical_model/hierarchical_confusion_matrix.png",
       ],
     },
+    // Add KMeans Elbow model handling
+    tab4: {
+      script: "kmeans_elbow_model/kmeans_train_model_elbow.py",
+      txt: "kmeans_elbow_model/kmeans_elbow_html_results.txt",
+      images: [
+        "kmeans_elbow_model/kmeans_elbow_clusters.png",
+        "kmeans_elbow_model/kmeans_elbow_pca.png",
+      ],
+    },
   };
 
   const model = modelMap[tab];
@@ -263,6 +272,14 @@ app.get("/check-existing-images/:tab", (req, res) => {
         "hierarchical_model/hierarchical_clusters.png",
         "hierarchical_model/hierarchical_pca.png",
         "hierarchical_model/hierarchical_confusion_matrix.png",
+      ],
+    },
+    // Add KMeans Elbow model handling
+    tab4: {
+      txt: "kmeans_elbow_model/kmeans_elbow_html_results.txt",
+      images: [
+        "kmeans_elbow_model/kmeans_elbow_clusters.png",
+        "kmeans_elbow_model/kmeans_elbow_pca.png",
       ],
     },
   };
