@@ -51,12 +51,12 @@ kmeans_html_content = ""
 
 
 def link_to_datatable_html(link, title, filename):
-    download_link = f'<a id="kmeans-download-link" download>📥 Download {filename}</a>'
-    return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-kmeans-table' class='btn btn-primary'>Load K-Means Table</button> <div id='kmeans_output_container'></div> \n\n"
+    download_link = f'<a id="kmeans-elbow-download-link" download>📥 Download {filename}</a>'
+    return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-kmeans_elbow-table' class='btn btn-primary'>Load K-Means Elbow Table</button> <div id='kmeans_elbow_output_container'></div> \n\n"
 
 def df_to_datatable_html(df, title, table_id, index):
     df_html = df.to_html(index=index, border=0)
-    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab1" style="width:100%">')
+    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab4" style="width:100%">')
     return f"<h2>{title}</h2>\n" + df_html +  "\n<br/><br/>\n"
 
 # ==============================
@@ -150,7 +150,7 @@ cluster_labels = [f"Cluster {i+1}" for i in range(best_k)]
 
 output_file = os.path.join(script_dir, "kmeans_elbow_output.csv")
 df_kmeans.to_csv(output_file)
-kmeans_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/kmeans_model/kmeans_elbow_output.csv", "K-Means Elbow Output", "kmeans_elbow_output.csv")
+kmeans_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/kmeans_elbow_model/kmeans_elbow_output.csv", "K-Means Elbow Output", "kmeans_elbow_output.csv")
 
 # ==============================
 # VISUALIZE CLUSTERING RESULTS
@@ -225,8 +225,7 @@ def group_and_report(df, group_col, report_name):
     cluster_count_sorted = cluster_count.sort_values(by='Total_Score', ascending=False)
     report_path = os.path.join(script_dir, report_name)
     cluster_count_sorted.to_csv(report_path, index=True)
-    kmeans_html_content = df_to_datatable_html(cluster_count_sorted, f"K-Means Elbow Group By {group_col}", report_name.replace('.csv', ''), True)
-    return kmeans_html_content
+    return df_to_datatable_html(cluster_count_sorted, f"K-Means Elbow Group By {group_col}", report_name.replace('.csv', ''), True)
 
 kmeans_html_content += group_and_report(df_kmeans, 'UNIT KERJA', "kmeans_elbow_best_unit_kerja_report.csv")
 kmeans_html_content += group_and_report(df_kmeans, 'TINGKAT', "kmeans_elbow_best_tingkat_report.csv")
@@ -239,7 +238,11 @@ kmeans_html_content += group_and_report(df_kmeans, 'JENIS KELAMIN', "kmeans_elbo
 # CLOSE HTML AND SAVE
 # ==============================
 
-kmeans_html_content += "</body>\n</html>\n"
+# kmeans_html_content += """
+# </body>
+# </html>
+# """
+
 html_log_file = os.path.join(script_dir, "kmeans_elbow_html_results.txt")
 with open(html_log_file, "w", encoding="utf-8") as f:
     f.write(kmeans_html_content)
