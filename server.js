@@ -198,7 +198,7 @@ app.get("/load-content/:tab", (req, res) => {
     },
     // Add KMeans Elbow model handling
     tab4: {
-      script: "kmeans_elbow_model/kmeans_train_model_elbow.py",
+      script: "kmeans_elbow_model/kmeans_elbow_train_model.py",
       txt: "kmeans_elbow_model/kmeans_elbow_html_results.txt",
       images: [
         "kmeans_elbow_model/kmeans_elbow_clusters.png",
