@@ -51,7 +51,7 @@ kmeans_html_content = ""
 
 
 def link_to_datatable_html(link, title, filename):
-    download_link = f'<a id="kmeans-elbow-download-link" download>📥 Download {filename}</a>'
+    download_link = f'<a id="kmeans_elbow-download-link" download>📥 Download {filename}</a>'
     return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-kmeans_elbow-table' class='btn btn-primary'>Load K-Means Elbow Table</button> <div id='kmeans_elbow_output_container'></div> \n\n"
 
 def df_to_datatable_html(df, title, table_id, index):

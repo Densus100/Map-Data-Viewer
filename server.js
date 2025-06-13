@@ -203,9 +203,31 @@ app.get("/load-content/:tab", (req, res) => {
       images: [
         "kmeans_elbow_model/kmeans_elbow_clusters.png",
         "kmeans_elbow_model/kmeans_elbow_pca.png",
-        "kmeans_elbow_model/kmeans_yellowbrick_elbow.png",
+        "kmeans_elbow_model/kmeans_elbow_fit_time.png",
       ],
     },
+    // --- Add these for GMM Elbow and Hierarchical Elbow ---
+    tab5: {
+      script: "gmm_elbow_model/gmm_elbow_train_model.py",
+      txt: "gmm_elbow_model/gmm_elbow_html_results.txt",
+      images: [
+        "gmm_elbow_model/gmm_elbow_clusters.png",
+        "gmm_elbow_model/gmm_elbow_pca.png",
+        "gmm_elbow_model/gmm_elbow_bic_aic.png",
+        "gmm_elbow_model/gmm_elbow_fit_time.png"
+      ],
+    },
+    tab6: {
+      script: "hierarchical_elbow_model/hierarchical_elbow_train_model.py",
+      txt: "hierarchical_elbow_model/hierarchical_elbow_html_results.txt",
+      images: [
+        "hierarchical_elbow_model/hierarchical_elbow_dendrogram.png",
+        "hierarchical_elbow_model/hierarchical_elbow_clusters.png",
+        "hierarchical_elbow_model/hierarchical_elbow_pca.png",
+        "hierarchical_elbow_model/hierarchical_elbow_fit_time.png"
+      ],
+    },
+    // ------------------------------------------------------
   };
 
   const model = modelMap[tab];
@@ -281,9 +303,29 @@ app.get("/check-existing-images/:tab", (req, res) => {
       images: [
         "kmeans_elbow_model/kmeans_elbow_clusters.png",
         "kmeans_elbow_model/kmeans_elbow_pca.png",
-        "kmeans_elbow_model/kmeans_yellowbrick_elbow.png",
+        "kmeans_elbow_model/kmeans_elbow_fit_time.png",
       ],
     },
+    // --- Add these for GMM Elbow and Hierarchical Elbow ---
+    tab5: {
+      txt: "gmm_elbow_model/gmm_elbow_html_results.txt",
+      images: [
+        "gmm_elbow_model/gmm_elbow_clusters.png",
+        "gmm_elbow_model/gmm_elbow_pca.png",
+        "gmm_elbow_model/gmm_elbow_bic_aic.png",
+        "gmm_elbow_model/gmm_elbow_fit_time.png"
+      ],
+    },
+    tab6: {
+      txt: "hierarchical_elbow_model/hierarchical_elbow_html_results.txt",
+      images: [
+        "hierarchical_elbow_model/hierarchical_elbow_dendrogram.png",
+        "hierarchical_elbow_model/hierarchical_elbow_clusters.png",
+        "hierarchical_elbow_model/hierarchical_elbow_pca.png",
+        "hierarchical_elbow_model/hierarchical_elbow_fit_time.png"
+      ],
+    },
+    // ------------------------------------------------------
   };
 
   const model = modelMap[tab];

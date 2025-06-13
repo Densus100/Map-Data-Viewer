@@ -21,7 +21,7 @@ import time
 hierarchical_html_content = ""
 
 def link_to_datatable_html(link, title, filename):
-    download_link = f'<a id="hierarchical-elbow-download-link" download>📥 Download {filename}</a>'
+    download_link = f'<a id="hierarchical_elbow-download-link" download>📥 Download {filename}</a>'
     return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-hierarchical_elbow-table' class='btn btn-primary'>Load Hierarchical Elbow Table</button> <div id='hierarchical_elbow_output_container'></div> \n\n"
 
 def df_to_datatable_html(df, title, table_id, index):

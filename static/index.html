@@ -616,6 +616,32 @@
                             aria-selected="false"
                         >KMeans Elbow</button>
                     </li>
+                    <!-- GMM Elbow Tab -->
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="tab5-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab5"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab5"
+                            aria-selected="false"
+                        >GMM Elbow</button>
+                    </li>
+                    <!-- Hierarchical Elbow Tab -->
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="tab6-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab6"
+                            type="button"
+                            role="tab"
+                            aria-controls="tab6"
+                            aria-selected="false"
+                        >Hierarchical Elbow</button>
+                    </li>
                 </ul>
                 <div class="tab-content mt-4" id="myTabContent">
                     <div
@@ -684,6 +710,40 @@
                         <br>
                         <div id="output-tab4"></div>
                         <div class="row images-container4 justify-content-center" style="display: none;"></div>
+                    </div>
+                    <!-- GMM Elbow Tab Content -->
+                    <div
+                        class="tab-pane fade"
+                        id="tab5"
+                        role="tabpanel"
+                        aria-labelledby="tab5-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab5">Generate Data</button>
+                        <!-- <button id="gmm-elbow-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab5">Download GMM Elbow PDF</button> -->
+                        <br>
+                        <br>
+                        <div id="images-tab5" class="text-center"></div>
+                        <br>
+                        <br>
+                        <div id="output-tab5"></div>
+                        <div class="row images-container5 justify-content-center" style="display: none;"></div>
+                    </div>
+                    <!-- Hierarchical Elbow Tab Content -->
+                    <div
+                        class="tab-pane fade"
+                        id="tab6"
+                        role="tabpanel"
+                        aria-labelledby="tab6-tab"
+                    >
+                        <button class="btn btn-primary load-result-btn" data-tab="tab6">Generate Data</button>
+                        <!-- <button id="hierarchical-elbow-download-btn" class="btn btn-success download-pdf-btn" data-tab="tab6">Download Hierarchical Elbow PDF</button> -->
+                        <br>
+                        <br>
+                        <div id="images-tab6" class="text-center"></div>
+                        <br>
+                        <br>
+                        <div id="output-tab6"></div>
+                        <div class="row images-container6 justify-content-center" style="display: none;"></div>
                     </div>
                 </div>
             </div>

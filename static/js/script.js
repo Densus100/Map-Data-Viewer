@@ -389,6 +389,10 @@ $(document).ready(function () {
       model = "hierarchical";
     } else if (tab == "tab4") {
       model = "kmeans_elbow";
+    } else if (tab == "tab5") {
+      model = "gmm_elbow";
+    } else if (tab == "tab6") {
+      model = "hierarchical_elbow";
     }
 
     $(`#load-${model}-table`).click(function (event) {
@@ -499,6 +503,10 @@ $(document).ready(function () {
       model = "hierarchical";
     } else if (tab == "tab4") {
       model = "kmeans_elbow";
+    } else if (tab == "tab5") {
+      model = "gmm_elbow";
+    } else if (tab == "tab6") {
+      model = "hierarchical_elbow";
     }
 
     // 🔍 Check if images & content are already present
@@ -591,6 +599,10 @@ $(document).ready(function () {
       model = "hierarchical";
     } else if (tab == "tab4") {
       model = "kmeans_elbow";
+    } else if (tab == "tab5") {
+      model = "gmm_elbow";
+    } else if (tab == "tab6") {
+      model = "hierarchical_elbow";
     }
 
     $("#loading-overlay").fadeIn("slow");
