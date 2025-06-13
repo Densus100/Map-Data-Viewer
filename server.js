@@ -213,7 +213,6 @@ app.get("/load-content/:tab", (req, res) => {
       images: [
         "gmm_elbow_model/gmm_elbow_clusters.png",
         "gmm_elbow_model/gmm_elbow_pca.png",
-        "gmm_elbow_model/gmm_elbow_bic_aic.png",
         "gmm_elbow_model/gmm_elbow_fit_time.png"
       ],
     },
@@ -312,7 +311,6 @@ app.get("/check-existing-images/:tab", (req, res) => {
       images: [
         "gmm_elbow_model/gmm_elbow_clusters.png",
         "gmm_elbow_model/gmm_elbow_pca.png",
-        "gmm_elbow_model/gmm_elbow_bic_aic.png",
         "gmm_elbow_model/gmm_elbow_fit_time.png"
       ],
     },
