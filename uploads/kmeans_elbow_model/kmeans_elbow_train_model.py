@@ -124,7 +124,7 @@ fig, ax = plt.subplots(figsize=(8, 6))
 kmeans_yb = KMeans(random_state=42)
 visualizer = KElbowVisualizer(kmeans_yb, k=(2, 11), ax=ax)
 visualizer.fit(X_scaled)
-kelbow_plot_path = os.path.join(script_dir, "kmeans_yellowbrick_elbow.png")
+kelbow_plot_path = os.path.join(script_dir, "kmeans_elbow_fit_time.png")
 visualizer.show(outpath=kelbow_plot_path)
 plt.close(fig)
 

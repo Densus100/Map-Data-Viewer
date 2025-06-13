@@ -1,323 +1,261 @@
-# # ==============================
-# # IMPORTS
-# # ==============================
+# ==============================
+# IMPORTS
+# ==============================
 
-# # Standard Library Imports (for file handling and script management)
-# import os
-# import sys
+import os
+import sys
+import joblib
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
+from kneed import KneeLocator
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from matplotlib.colors import ListedColormap
+from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
+from sklearn.cluster import AgglomerativeClustering
+import scipy.cluster.hierarchy as sch
+import time
 
-# # Third-Party Library Imports (external dependencies)
-# import joblib  # For saving and loading models
-# import pandas as pd  # Data manipulation library
-# import matplotlib.pyplot as plt  # Data visualization
-# import matplotlib
-# from kneed import KneeLocator
-# from scipy.spatial.distance import cdist
-# from yellowbrick.cluster import KElbowVisualizer
+hierarchical_html_content = ""
 
-# # Machine Learning & Preprocessing Imports
-# from sklearn.decomposition import PCA
-# import numpy as np
-# from sklearn.preprocessing import StandardScaler
-# from matplotlib.colors import ListedColormap
-# from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
-# from sklearn.cluster import KMeans  # K-Means clustering algorithm
-# # from sklearn.metrics import (
-# #     confusion_matrix,
-# #     classification_report,
-# #     ConfusionMatrixDisplay
-# # )
+def link_to_datatable_html(link, title, filename):
+    download_link = f'<a id="hierarchical-elbow-download-link" download>📥 Download {filename}</a>'
+    return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-hierarchical_elbow-table' class='btn btn-primary'>Load Hierarchical Elbow Table</button> <div id='hierarchical_elbow_output_container'></div> \n\n"
 
-# # kmeans_html_content = """
-# # <!DOCTYPE html>
-# # <html lang="en">
-# # <head>
-# #     <meta charset="UTF-8">
-# #     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-# #     <title>K-Means Clustering Results</title>
-# #     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-# #     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-# #     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-# #     <script>
-# #         $(document).ready(function() {
-# #             $('table').DataTable();
-# #         });
-# #     </script>
-# # </head>
-# # <body>
-# # <h1>K-Means Clustering Results</h1>
-# # """
-# kmeans_html_content = ""
+def df_to_datatable_html(df, title, table_id, index):
+    df_html = df.to_html(index=index, border=0)
+    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab4" style="width:100%">')
+    return f"<h2>{title}</h2>\n" + df_html +  "\n<br/><br/>\n"
 
+# ==============================
+# LOAD DATA
+# ==============================
 
-# def link_to_datatable_html(link, title, filename):
-#     download_link = f'<a id="kmeans-elbow-download-link" download>📥 Download {filename}</a>'
-#     return f"<h2>{title}</h2>\n" + download_link +  "\n<br/>\n <button id='load-kmeans_elbow-table' class='btn btn-primary'>Load K-Means Elbow Table</button> <div id='kmeans_elbow_output_container'></div> \n\n"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(script_dir, "..", "data_ready.xlsx")
 
-# def df_to_datatable_html(df, title, table_id, index):
-#     df_html = df.to_html(index=index, border=0)
-#     df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab4" style="width:100%">')
-#     return f"<h2>{title}</h2>\n" + df_html +  "\n<br/><br/>\n"
+try:
+    df = pd.read_excel(file_path, index_col=0)
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+    sys.exit(1)
+except Exception as e:
+    print(f"An error occurred: {e}")
+    sys.exit(1)
 
-# # ==============================
-# # LOAD DATA
-# # ==============================
+# ==============================
+# FEATURE ENGINEERING
+# ==============================
 
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-# file_path = os.path.join(script_dir, "..", "data_ready.xlsx")
+doc_columns = [
+    "FOTO 1/2 BADAN (*)", "FOTO FULL BODY (*)", "AKTA LAHIR (*)",
+    "KTP (*)", "NPWP(*)", "SUMPAH PNS", "NOTA BKN", "SPMT CPNS",
+    "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS", "NO KK"
+]
 
-# try:
-#     df = pd.read_excel(file_path, index_col=0)
-# except FileNotFoundError:
-#     print(f"Error: File not found at {file_path}")
-#     sys.exit(1)
-# except Exception as e:
-#     print(f"An error occurred: {e}")
-#     sys.exit(1)
+df_hier = df.copy()
+df_hier.loc[:, 'Completeness_Percentage'] = (df_hier[doc_columns].sum(axis=1) / len(doc_columns)) * 100
+weight_factor = 5
+df_hier['Weighted_Completeness'] = df_hier['Completeness_Percentage'] * weight_factor
+df_hier_for_clustering = df_hier[doc_columns + ['Weighted_Completeness']]
 
-# # ==============================
-# # FEATURE ENGINEERING
-# # ==============================
+# ==============================
+# DATA SCALING
+# ==============================
 
-# doc_columns = [
-#     "FOTO 1/2 BADAN (*)", "FOTO FULL BODY (*)", "AKTA LAHIR (*)",
-#     "KTP (*)", "NPWP(*)", "SUMPAH PNS", "NOTA BKN", "SPMT CPNS",
-#     "KARTU ASN VIRTUAL", "NO NPWP", "NO BPJS", "NO KK"
-# ]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_hier_for_clustering)
 
-# df_kmeans = df.copy()
-# df_kmeans.loc[:, 'Completeness_Percentage'] = (df_kmeans[doc_columns].sum(axis=1) / len(doc_columns)) * 100
-# weight_factor = 5
-# df_kmeans['Weighted_Completeness'] = df_kmeans['Completeness_Percentage'] * weight_factor
-# df_kmeans_for_clustering = df_kmeans[doc_columns + ['Weighted_Completeness']]
+# ==============================
+# ELBOW METHOD FOR HIERARCHICAL (DENDROGRAM & LINKAGE DISTANCES)
+# ==============================
 
-# # ==============================
-# # DATA SCALING
-# # ==============================
+# Compute linkage matrix for dendrogram and elbow
+linkage_matrix = sch.linkage(X_scaled, method='ward')
 
-# scaler = StandardScaler()
-# X_scaled = scaler.fit_transform(df_kmeans_for_clustering)
+# Plot dendrogram (truncated)
+plt.figure(figsize=(12, 6))
+dendrogram = sch.dendrogram(
+    linkage_matrix,
+    truncate_mode='level',
+    p=5
+)
+plt.title('Dendrogram (Truncated)', fontsize=16)
+plt.xlabel('Samples', fontsize=14)
+plt.ylabel('Euclidean Distances', fontsize=14)
+plt.tight_layout()
+dendrogram_output = os.path.join(script_dir, "hierarchical_elbow_dendrogram.png")
+plt.savefig(dendrogram_output, dpi=300, bbox_inches="tight")
+plt.close()
 
-# # ==============================
-# # ELBOW METHOD TO FIND BEST K (Inertia)
-# # ==============================
+# Plot linkage distances and fit times (manual elbow plot)
+last = linkage_matrix[-10:, 2]
+num_clusters = range(1, 11)
+reversed_last = last[::-1]
 
-# inertias = []
-# mapping1 = {}
-# mapping2 = {}
-# K = range(1, 11)
+# Find the elbow using KneeLocator
+K_range = list(num_clusters)
+kneedle = KneeLocator(K_range, reversed_last, curve='convex', direction='decreasing')
+best_k = kneedle.elbow if kneedle.elbow is not None else 3
 
-# for k in K:
-#     kmeanModel = KMeans(n_clusters=k, random_state=42).fit(X_scaled)
-#     inertias.append(kmeanModel.inertia_)
-#     mapping2[k] = inertias[-1]
+# Calculate fit times for each K
+fit_times = []
+for k in num_clusters:
+    start = time.time()
+    AgglomerativeClustering(n_clusters=k, metric='euclidean', linkage='ward').fit(X_scaled)
+    fit_times.append(time.time() - start)
 
+fig, ax1 = plt.subplots(figsize=(8, 6))
 
-# # Use inertia for KneeLocator to find best_k (skip k=1)
-# K_range = list(range(2, 11))
-# kneedle = KneeLocator(K_range, inertias[1:], curve='convex', direction='decreasing')
-# best_k = kneedle.elbow if kneedle.elbow is not None else 3
-# print(f"Best K found by elbow method: {best_k}")
+color_linkage = 'tab:blue'
+color_time = 'tab:green'
 
-# # Yellowbrick KElbowVisualizer (using inertia)
-# fig, ax = plt.subplots(figsize=(8, 6))
-# kmeans_yb = KMeans(random_state=42)
-# visualizer = KElbowVisualizer(kmeans_yb, k=(2, 11), ax=ax)
-# visualizer.fit(X_scaled)
-# kelbow_plot_path = os.path.join(script_dir, "kmeans_yellowbrick_elbow.png")
-# visualizer.show(outpath=kelbow_plot_path)
-# plt.close(fig)
+# Plot linkage distances
+ax1.plot(num_clusters, reversed_last, marker='o', color=color_linkage, label='Linkage Distance')
+ax1.set_xlabel('Number of Clusters (K)', fontsize=12)
+ax1.set_ylabel('Linkage Distance', color=color_linkage, fontsize=12)
+ax1.tick_params(axis='y', labelcolor=color_linkage)
+ax1.set_xticks(list(num_clusters))
+ax1.grid(alpha=0.5)
 
-# # ==============================
-# # KMEANS WITH BEST K
-# # ==============================
+# Mark the best_k found by KneeLocator
+ax1.axvline(best_k, color='black', linestyle='--', label=f'Elbow at k={best_k}')
 
-# kmeans = KMeans(n_clusters=best_k, random_state=42)
-# df_kmeans.loc[:, 'Cluster'] = kmeans.fit_predict(X_scaled)
-# model_output = os.path.join(script_dir, "kmeans_model_elbow.pkl")
-# joblib.dump(kmeans, model_output)
+# Plot fit time on secondary y-axis
+ax2 = ax1.twinx()
+ax2.plot(num_clusters, fit_times, marker='s', color=color_time, linestyle='--', label='Fit Time (s)')
+ax2.set_ylabel('Fit Time (seconds)', color=color_time, fontsize=12)
+ax2.tick_params(axis='y', labelcolor=color_time)
 
-# # ==============================
-# # CLUSTER LABELS AS "CLUSTER 1", "CLUSTER 2", ...
-# # ==============================
+# Combine legends from both axes, place at top right
+lines_1, labels_1 = ax1.get_legend_handles_labels()
+lines_2, labels_2 = ax2.get_legend_handles_labels()
+ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper right', fontsize=11)
 
-# df_kmeans['Cluster_Label'] = df_kmeans['Cluster'].apply(lambda x: f"Cluster {x+1}")
-# cluster_labels = [f"Cluster {i+1}" for i in range(best_k)]
+ax1.set_title('Hierarchical Elbow: Linkage Distance & Fit Time vs K', fontsize=14)
+plt.tight_layout()
+elbow_plot_path = os.path.join(script_dir, "hierarchical_elbow_fit_time.png")
+plt.savefig(elbow_plot_path, dpi=300, bbox_inches="tight")
+plt.close(fig)
 
-# # ==============================
-# # EXPORT CLUSTERED DATA
-# # ==============================
+print(f"Best K found by elbow method (linkage): {best_k}")
 
-# output_file = os.path.join(script_dir, "kmeans_elbow_output.csv")
-# df_kmeans.to_csv(output_file)
-# kmeans_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/kmeans_elbow_model/kmeans_elbow_output.csv", "K-Means Elbow Output", "kmeans_elbow_output.csv")
+# ==============================
+# HIERARCHICAL CLUSTERING WITH BEST K
+# ==============================
 
-# # ==============================
-# # VISUALIZE CLUSTERING RESULTS
-# # ==============================
+hierarchical = AgglomerativeClustering(n_clusters=best_k, metric='euclidean', linkage='ward')
+df_hier.loc[:, 'Cluster'] = hierarchical.fit_predict(X_scaled)
 
-# plt.figure(figsize=(10, 6))
-# for label in cluster_labels:
-#     subset = df_kmeans[df_kmeans['Cluster_Label'] == label]
-#     plt.scatter(subset.index, subset['Completeness_Percentage'], label=label, s=50)
-# plt.title('K-means Elbow Clustering of Document Completeness (No Grouping)', fontsize=16)
-# plt.xlabel('Index', fontsize=14)
-# plt.ylabel('Completeness Percentage', fontsize=14)
-# plt.xticks([], [])
-# plt.legend(title='Cluster Label', fontsize=12)
-# plt.grid(alpha=0.5)
-# plt.tight_layout()
-# cluster_output = os.path.join(script_dir, "kmeans_elbow_clusters.png")
-# plt.savefig(cluster_output, dpi=300, bbox_inches="tight")
-# plt.close()
+# ==============================
+# ASSIGN CLUSTER LABELS AS "CLUSTER 1", "CLUSTER 2", ...
+# ==============================
 
-# # ==============================
-# # CLUSTERING METRICS
-# # ==============================
+df_hier['Cluster_Label'] = df_hier['Cluster'].apply(lambda x: f"Cluster {x+1}")
+cluster_labels = [f"Cluster {i+1}" for i in range(best_k)]
 
-# silhouette = silhouette_score(X_scaled, df_kmeans['Cluster'])
-# calinski_harabasz = calinski_harabasz_score(X_scaled, df_kmeans['Cluster'])
-# davies_bouldin = davies_bouldin_score(X_scaled, df_kmeans['Cluster'])
+# ==============================
+# EXPORT CLUSTERED DATA
+# ==============================
 
-# metrics_dict = {
-#     "Metric": ["Silhouette Score", "Calinski-Harabasz Index", "Davies-Bouldin Index"],
-#     "Value": [silhouette, calinski_harabasz, davies_bouldin]
-# }
-# metrics_df = pd.DataFrame(metrics_dict)
-# metrics_file = os.path.join(script_dir, "kmeans_elbow_metrics.csv")
-# metrics_df.to_csv(metrics_file, index=False)
-# kmeans_html_content += df_to_datatable_html(metrics_df, "K-Means Elbow Metrics", "kmeans_elbow_metrics", False)
+output_file = os.path.join(script_dir, "hierarchical_elbow_output.csv")
+df_hier.to_csv(output_file)
+hierarchical_html_content += link_to_datatable_html("http://${serverIP}:3000/uploads/hierarchical_elbow_model/hierarchical_elbow_output.csv", "Hierarchical Elbow Output", "hierarchical_elbow_output.csv")
 
-# # ==============================
-# # PCA VISUALIZATION
-# # ==============================
+# ==============================
+# VISUALIZE CLUSTERING RESULTS
+# ==============================
 
-# pca = PCA(n_components=2)
-# X_pca = pca.fit_transform(X_scaled)
-# custom_cmap = ListedColormap(matplotlib.colormaps['tab10'].colors[:best_k])
-# plt.figure(figsize=(10, 8))
-# scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=df_kmeans['Cluster'], cmap=custom_cmap, edgecolors='k', s=50)
-# kmeans_centroids_pca = pca.transform(kmeans.cluster_centers_)
-# plt.scatter(kmeans_centroids_pca[:, 0], kmeans_centroids_pca[:, 1], marker='X', s=300, c='black', edgecolors='white', label='Centroids')
-# for i, label in enumerate(cluster_labels):
-#     plt.text(kmeans_centroids_pca[i, 0], kmeans_centroids_pca[i, 1], label, fontsize=12, weight='bold')
-# plt.title('K-means Clustering with Cluster Areas (2D PCA)', fontsize=16)
-# plt.xlabel('PCA Component 1', fontsize=14)
-# plt.ylabel('PCA Component 2', fontsize=14)
-# plt.colorbar(scatter, label='Cluster')
-# plt.legend()
-# plt.tight_layout()
-# pca_output = os.path.join(script_dir, "kmeans_elbow_pca.png")
-# plt.savefig(pca_output, dpi=300, bbox_inches='tight')
-# plt.close()
+plt.figure(figsize=(10, 6))
+for label in cluster_labels:
+    subset = df_hier[df_hier['Cluster_Label'] == label]
+    plt.scatter(subset.index, subset['Completeness_Percentage'], label=label, s=50)
+plt.title('Hierarchical Elbow Clustering of Document Completeness (No Grouping)', fontsize=16)
+plt.xlabel('Index', fontsize=14)
+plt.ylabel('Completeness Percentage', fontsize=14)
+plt.xticks([], [])
+plt.legend(title='Cluster Label', fontsize=12)
+plt.grid(alpha=0.5)
+plt.tight_layout()
+cluster_output = os.path.join(script_dir, "hierarchical_elbow_clusters.png")
+plt.savefig(cluster_output, dpi=300, bbox_inches="tight")
+plt.close()
 
-# # ==============================
-# # GROUP BY REPORTS (DYNAMIC CLUSTER LABELS)
-# # ==============================
+# ==============================
+# CLUSTERING METRICS
+# ==============================
 
-# def group_and_report(df, group_col, report_name):
-#     cluster_count = df.groupby(group_col)['Cluster_Label'].value_counts().unstack(fill_value=0)
-#     cluster_count = cluster_count.reindex(columns=cluster_labels, fill_value=0)
-#     cluster_count['Total'] = cluster_count[cluster_labels].sum(axis=1)
-#     # Assign weights: Cluster 1 = best, Cluster 2 = next, etc.
-#     weights = {label: best_k - i for i, label in enumerate(cluster_labels)}
-#     cluster_count['Total_Score'] = sum(cluster_count[label] * weights[label] for label in cluster_labels)
-#     cluster_count_sorted = cluster_count.sort_values(by='Total_Score', ascending=False)
-#     report_path = os.path.join(script_dir, report_name)
-#     cluster_count_sorted.to_csv(report_path, index=True)
-#     return df_to_datatable_html(cluster_count_sorted, f"K-Means Elbow Group By {group_col}", report_name.replace('.csv', ''), True)
+silhouette = silhouette_score(X_scaled, df_hier['Cluster'])
+calinski_harabasz = calinski_harabasz_score(X_scaled, df_hier['Cluster'])
+davies_bouldin = davies_bouldin_score(X_scaled, df_hier['Cluster'])
 
-# kmeans_html_content += group_and_report(df_kmeans, 'UNIT KERJA', "kmeans_elbow_best_unit_kerja_report.csv")
-# kmeans_html_content += group_and_report(df_kmeans, 'TINGKAT', "kmeans_elbow_best_tingkat_report.csv")
-# kmeans_html_content += group_and_report(df_kmeans, 'LOKASI', "kmeans_elbow_best_lokasi_report.csv")
-# kmeans_html_content += group_and_report(df_kmeans, 'PROVINSI', "kmeans_elbow_best_provinsi_report.csv")
-# kmeans_html_content += group_and_report(df_kmeans, 'STATUS', "kmeans_elbow_best_status_report.csv")
-# kmeans_html_content += group_and_report(df_kmeans, 'JENIS KELAMIN', "kmeans_elbow_best_jenis_kelamin_report.csv")
+metrics_dict = {
+    "Metric": ["Silhouette Score", "Calinski-Harabasz Index", "Davies-Bouldin Index"],
+    "Value": [silhouette, calinski_harabasz, davies_bouldin]
+}
+metrics_df = pd.DataFrame(metrics_dict)
+metrics_file = os.path.join(script_dir, "hierarchical_elbow_metrics.csv")
+metrics_df.to_csv(metrics_file, index=False)
+hierarchical_html_content += df_to_datatable_html(metrics_df, "Hierarchical Elbow Metrics", "hierarchical_elbow_metrics", False)
 
-# # ==============================
-# # CLOSE HTML AND SAVE
-# # ==============================
+# ==============================
+# PCA VISUALIZATION
+# ==============================
 
-# # kmeans_html_content += """
-# # </body>
-# # </html>
-# # """
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+custom_cmap = ListedColormap(matplotlib.colormaps['tab10'].colors[:best_k])
+plt.figure(figsize=(10, 8))
+scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=df_hier['Cluster'], cmap=custom_cmap, edgecolors='k', s=50)
+# Compute centroids in original space, then project to PCA
+cluster_labels_idx = df_hier['Cluster'].values
+unique_labels = np.unique(cluster_labels_idx)
+centroids = np.array([X_scaled[cluster_labels_idx == label].mean(axis=0) for label in unique_labels])
+centroids_pca = pca.transform(centroids)
+plt.scatter(centroids_pca[:, 0], centroids_pca[:, 1], marker='X', s=300, c='black', edgecolors='white', label='Centroids')
+for i, label in enumerate(cluster_labels):
+    plt.text(centroids_pca[i, 0], centroids_pca[i, 1], label, fontsize=12, weight='bold')
+plt.title('Hierarchical Elbow Clustering with Cluster Areas (2D PCA)', fontsize=16)
+plt.xlabel('PCA Component 1', fontsize=14)
+plt.ylabel('PCA Component 2', fontsize=14)
+plt.colorbar(scatter, label='Cluster')
+plt.legend()
+plt.tight_layout()
+pca_output = os.path.join(script_dir, "hierarchical_elbow_pca.png")
+plt.savefig(pca_output, dpi=300, bbox_inches='tight')
+plt.close()
 
-# html_log_file = os.path.join(script_dir, "kmeans_elbow_html_results.txt")
-# with open(html_log_file, "w", encoding="utf-8") as f:
-#     f.write(kmeans_html_content)
+# ==============================
+# GROUP BY REPORTS (DYNAMIC CLUSTER LABELS)
+# ==============================
 
-# print(f"All DataFrames saved as HTML in: {html_log_file}")
+def group_and_report(df, group_col, report_name):
+    cluster_count = df.groupby(group_col)['Cluster_Label'].value_counts().unstack(fill_value=0)
+    cluster_count = cluster_count.reindex(columns=cluster_labels, fill_value=0)
+    cluster_count['Total'] = cluster_count[cluster_labels].sum(axis=1)
+    # Assign weights: Cluster 1 = best, Cluster 2 = next, etc.
+    weights = {label: best_k - i for i, label in enumerate(cluster_labels)}
+    cluster_count['Total_Score'] = sum(cluster_count[label] * weights[label] for label in cluster_labels)
+    cluster_count_sorted = cluster_count.sort_values(by='Total_Score', ascending=False)
+    report_path = os.path.join(script_dir, report_name)
+    cluster_count_sorted.to_csv(report_path, index=True)
+    return df_to_datatable_html(cluster_count_sorted, f"Hierarchical Elbow Group By {group_col}", report_name.replace('.csv', ''), True)
 
-# # ==============================
-# # (OPTIONAL) CLASSIFY DOCUMENT COMPLETENESS (GROUND TRUTH) FOR EVALUATION
-# # ==============================
+hierarchical_html_content += group_and_report(df_hier, 'UNIT KERJA', "hierarchical_elbow_best_unit_kerja_report.csv")
+hierarchical_html_content += group_and_report(df_hier, 'TINGKAT', "hierarchical_elbow_best_tingkat_report.csv")
+hierarchical_html_content += group_and_report(df_hier, 'LOKASI', "hierarchical_elbow_best_lokasi_report.csv")
+hierarchical_html_content += group_and_report(df_hier, 'PROVINSI', "hierarchical_elbow_best_provinsi_report.csv")
+hierarchical_html_content += group_and_report(df_hier, 'STATUS', "hierarchical_elbow_best_status_report.csv")
+hierarchical_html_content += group_and_report(df_hier, 'JENIS KELAMIN', "hierarchical_elbow_best_jenis_kelamin_report.csv")
 
-# # # Define thresholds for classifying document completeness
-# # medium_threshold = 40
-# # high_threshold = 80
+# ==============================
+# CLOSE HTML AND SAVE
+# ==============================
 
-# # def classify_completeness(percentage):
-# #     if percentage > high_threshold:
-# #         return 'High'
-# #     elif percentage > medium_threshold:
-# #         return 'Medium'
-# #     else:
-# #         return 'Low'
+html_log_file = os.path.join(script_dir, "hierarchical_elbow_html_results.txt")
+with open(html_log_file, "w", encoding="utf-8") as f:
+    f.write(hierarchical_html_content)
 
-# # df_kmeans['Actual_Label'] = df_kmeans['Completeness_Percentage'].apply(classify_completeness)
-
-# # # Map each cluster to the most common Actual_Label in that cluster
-# # cluster_to_actual = (
-# #     df_kmeans.groupby('Cluster_Label')['Actual_Label']
-# #     .agg(lambda x: x.value_counts().index[0])
-# #     .to_dict()
-# # )
-# # df_kmeans['Predicted_Label'] = df_kmeans['Cluster_Label'].map(cluster_to_actual)
-
-# # labels = cluster_labels  # ['Cluster 1', 'Cluster 2', ..., 'Cluster N']
-
-# # # Compute confusion matrix to evaluate clustering performance
-# # conf_matrix = confusion_matrix(
-# #     df_kmeans['Cluster_Label'],
-# #     df_kmeans['Predicted_Label'],
-# #     labels=labels
-# # )
-
-# # # Convert confusion matrix to a DataFrame for easier readability
-# # conf_matrix_df = pd.DataFrame(
-# #     conf_matrix,
-# #     index=[f'Actual_{label}' for label in labels],
-# #     columns=[f'Pred_{label}' for label in labels]
-# # )
-
-# # # Save confusion matrix as a CSV file
-# # conf_matrix_report = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.csv")
-# # conf_matrix_df.to_csv(conf_matrix_report, index=True)
-
-# # # Generate and save confusion matrix plot
-# # disp = ConfusionMatrixDisplay(
-# #     confusion_matrix=conf_matrix,
-# #     display_labels=labels
-# # )
-# # disp.plot(cmap="Blues", values_format='d')
-# # plt.title("Confusion Matrix")
-# # matrix_output = os.path.join(script_dir, "kmeans_elbow_confusion_matrix.png")
-# # plt.savefig(matrix_output, dpi=300, bbox_inches='tight')
-# # plt.close()
-
-# # # Compute classification report (Precision, Recall, F1-Score)
-# # report = classification_report(
-# #     df_kmeans['Cluster_Label'],
-# #     df_kmeans['Predicted_Label'],
-# #     labels=labels,
-# #     target_names=labels,
-# #     output_dict=True,
-# #     zero_division=0  # <--- add this parameter
-# # )
-
-# # # Convert classification report to DataFrame and save as CSV
-# # report_df = pd.DataFrame(report).transpose()
-# # output_report = os.path.join(script_dir, "kmeans_elbow_classification_report.csv")
-# # report_df.to_csv(output_report, index=True)
-# # kmeans_html_content += df_to_datatable_html(report_df, "K-Means Elbow Classification Report", "kmeans_elbow_classification_report", True)
+print(f"All DataFrames saved as HTML in: {html_log_file}")

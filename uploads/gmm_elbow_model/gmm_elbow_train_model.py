@@ -5,6 +5,7 @@
 # Standard Library Imports (for file handling and script management)
 import os
 import sys
+import time
 
 # Third-Party Library Imports (external dependencies)
 import joblib  # For saving and loading models
@@ -79,12 +80,15 @@ X_scaled = scaler.fit_transform(df_gmm_for_clustering)
 
 bics = []
 aics = []
+fit_times = []
 K = range(1, 11)
 for k in K:
+    start = time.time()
     gmm = GaussianMixture(n_components=k, random_state=42, covariance_type="tied")
     gmm.fit(X_scaled)
     bics.append(gmm.bic(X_scaled))
     aics.append(gmm.aic(X_scaled))
+    fit_times.append(time.time() - start)
 
 # Use KneeLocator to find the elbow for BIC
 K_range = list(range(2, 11))
@@ -92,31 +96,37 @@ kneedle = KneeLocator(K_range, bics[1:], curve='convex', direction='decreasing')
 best_k = kneedle.elbow if kneedle.elbow is not None else 3
 print(f"Best K found by elbow method (BIC): {best_k}")
 
-# Yellowbrick KElbowVisualizer (using BIC)
-# fig, ax = plt.subplots(figsize=(8, 6))
-# visualizer = KElbowVisualizer(GaussianMixture(random_state=42, covariance_type="tied"), k=(2, 11), metric='bic', ax=ax)
-# visualizer.fit(X_scaled)
-# kelbow_plot_path = os.path.join(script_dir, "gmm_yellowbrick_elbow.png")
-# visualizer.show(outpath=kelbow_plot_path)
-# plt.close(fig)
-
-# Plot BIC and AIC scores for each K (manual elbow plot)
+# Plot BIC and fit time for each K (manual elbow plot)
 fig, ax1 = plt.subplots(figsize=(8, 6))
 
-ax1.plot(K, bics, marker='o', label='BIC', color='tab:blue')
-ax1.plot(K, aics, marker='s', label='AIC', color='tab:orange')
+color_bic = 'tab:blue'
+color_time = 'tab:green'
+
+# Plot BIC
+ax1.plot(K, bics, marker='o', color=color_bic, label='BIC')
 ax1.set_xlabel('Number of Clusters (K)', fontsize=12)
-ax1.set_ylabel('Score', fontsize=12)
-ax1.set_title('GMM Elbow Method: BIC & AIC vs K', fontsize=14)
-ax1.legend(loc='upper right')
+ax1.set_ylabel('BIC', color=color_bic, fontsize=12)
+ax1.tick_params(axis='y', labelcolor=color_bic)
+ax1.set_xticks(list(K))
 ax1.grid(alpha=0.5)
 
 # Mark the best_k found by KneeLocator
 ax1.axvline(best_k, color='black', linestyle='--', label=f'Elbow at k={best_k}')
-ax1.legend()
 
-bic_aic_plot_path = os.path.join(script_dir, "gmm_elbow_bic_aic.png")
+# Plot fit time on secondary y-axis
+ax2 = ax1.twinx()
+ax2.plot(K, fit_times, marker='s', color=color_time, linestyle='--', label='Fit Time (s)')
+ax2.set_ylabel('Fit Time (seconds)', color=color_time, fontsize=12)
+ax2.tick_params(axis='y', labelcolor=color_time)
+
+# Combine legends from both axes
+lines_1, labels_1 = ax1.get_legend_handles_labels()
+lines_2, labels_2 = ax2.get_legend_handles_labels()
+ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper right', fontsize=11)
+
+ax1.set_title('GMM Elbow: BIC & Fit Time vs K', fontsize=14)
 plt.tight_layout()
+bic_aic_plot_path = os.path.join(script_dir, "gmm_elbow_fit_time.png")
 plt.savefig(bic_aic_plot_path, dpi=300, bbox_inches="tight")
 plt.close(fig)
 
