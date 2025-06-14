@@ -26,7 +26,7 @@ def link_to_datatable_html(link, title, filename):
 
 def df_to_datatable_html(df, title, table_id, index):
     df_html = df.to_html(index=index, border=0)
-    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab4" style="width:100%">')
+    df_html = df_html.replace('<table class="dataframe">', f'<table id="{table_id}" class="display output_result_tab6" style="width:100%">')
     return f"<h2>{title}</h2>\n" + df_html +  "\n<br/><br/>\n"
 
 # ==============================
